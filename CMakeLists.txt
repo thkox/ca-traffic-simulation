@@ -3,4 +3,4 @@ project(ca_traffic_simulation)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(ca_traffic_simulation src/main.cpp src/Road.cpp src/Road.h)
+add_executable(ca_traffic_simulation src/main.cpp src/Road.cpp src/Road.h src/Lane.cpp src/Lane.h src/Vehicle.cpp src/Vehicle.h)
