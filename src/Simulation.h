@@ -6,8 +6,11 @@
 #define CA_TRAFFIC_SIMULATION_SIMULATION_H
 
 
+#include "Road.h"
+
 class Simulation {
 private:
+    Road* road;
 public:
     Simulation();
 };
