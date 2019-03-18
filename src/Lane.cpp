@@ -17,11 +17,12 @@ Lane::Lane(unsigned int size) {
     }
 }
 
-int Lane::initializeCars(double percent_full, unsigned int max_speed) {
+int Lane::initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles) {
     // Initialize cars in the sites of the Lane with given percentage
     for (int i = 0; i < this->sites.size(); i++) {
         if (std::rand() / RAND_MAX <= 1.0) {
             this->sites[i] = new Vehicle(this, i, max_speed);
+            vehicles->push_back(this->sites[i]);
         }
     }
 

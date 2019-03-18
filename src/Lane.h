@@ -16,7 +16,7 @@ private:
     std::vector<Vehicle*> sites;
 public:
     Lane(unsigned int size);
-    int initializeCars(double percent_full, unsigned int max_speed);
+    int initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles);
 };
 
 
