@@ -7,7 +7,7 @@
 #include "Lane.h"
 #include "Vehicle.h"
 
-Lane::Lane(unsigned int size) {
+Lane::Lane(unsigned int size, unsigned int lane_num) {
     // Allocate memory in for the vehicle pointers
     this->sites.reserve(size);
 
@@ -15,6 +15,9 @@ Lane::Lane(unsigned int size) {
     for (int i = 0; i < this->sites.size(); i++) {
         this->sites[i] = nullptr;
     }
+
+    // Set the lane number for the lane
+    this->lane_num = lane_num;
 }
 
 int Lane::initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles) {

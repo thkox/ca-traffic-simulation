@@ -14,8 +14,9 @@ class Lane {
 private:
     unsigned int size;
     std::vector<Vehicle*> sites;
+    unsigned int lane_num;
 public:
-    Lane(unsigned int size);
+    Lane(unsigned int size, unsigned int lane_num);
     int initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles);
 };
 
