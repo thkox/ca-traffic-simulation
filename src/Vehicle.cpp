@@ -26,12 +26,33 @@ Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max
     this->look_other_backward = look_other_backward;
 }
 
-unsigned int Vehicle::getForwardGap() {
-    // Locate the preceding Vehicle and return the gap between the current Vehicle and the preceding Vehicle
+int Vehicle::updateGaps() {
+    // Locate the preceding Vehicle and update the forward gap
     for (int i = 1; i < this->lane_ptr->getSize(); i++) {
         if (this->lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
-            return i - 1;
+            this->gap_forward = i - 1;
         }
     }
-    return this->lane_ptr->getSize() - 1;
+    this->gap_forward = this->lane_ptr->getSize() - 1;
+
+    // TODO: Update other lane forward gap
+
+    // TODO: Update other lane backward gap
+
+    // Return with zero errors
+    return 0;
+}
+
+int Vehicle::performLaneSwitch() {
+    // TODO: Implement vehicle lane switch
+
+    // Return with zero errors
+    return 0;
+}
+
+int Vehicle::performLaneMove() {
+    // TODO: Implement vehicle lane move
+
+    // Return with no errors
+    return 0;
 }
