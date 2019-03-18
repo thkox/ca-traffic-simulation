@@ -9,19 +9,19 @@
 
 Lane::Lane(unsigned int size) {
     // Allocate memory in for the vehicle pointers
-    sites.reserve(size);
+    this->sites.reserve(size);
 
     // Initialize each Vehicle pointer in the Lane to a null pointer
-    for (int i = 0; i < sites.size(); i++) {
-        sites[i] = NULL;
+    for (int i = 0; i < this->sites.size(); i++) {
+        this->sites[i] = nullptr;
     }
 }
 
-int Lane::initializeCars(double percent_full) {
+int Lane::initializeCars(double percent_full, unsigned int max_speed) {
     // Initialize cars in the sites of the Lane with given percentage
-    for (int i = 0; i < sites.size(); i++) {
+    for (int i = 0; i < this->sites.size(); i++) {
         if (std::rand() / RAND_MAX <= 1.0) {
-            sites[i] = new Vehicle();
+            this->sites[i] = new Vehicle(this, i, max_speed);
         }
     }
 

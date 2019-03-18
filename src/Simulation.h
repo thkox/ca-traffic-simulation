@@ -10,9 +10,11 @@
 
 class Simulation {
 private:
-    Road* road;
+    Road* road_ptr;
+    unsigned int time;
 public:
-    Simulation();
+    Simulation(unsigned int num_lanes, unsigned int length, double percent_full, unsigned int max_speed);
+    int run_simulation(unsigned int max_time);
 };
 
 

@@ -10,7 +10,7 @@ class Lane;
 
 class Vehicle {
 private:
-    Lane* lane;
+    Lane* lane_ptr;
     unsigned int position;
     unsigned int speed;
     unsigned int max_speed;
@@ -19,7 +19,7 @@ private:
     unsigned int gap_other_backward;
 
 public:
-    Vehicle();
+    Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max_speed);
 };
 
 

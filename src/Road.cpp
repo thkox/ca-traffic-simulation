@@ -7,14 +7,14 @@
 Road::Road(unsigned int num_lanes, unsigned int length) {
     // Create the Lane objects for the Road
     for (int i = 0; i < num_lanes; i++) {
-        lanes.push_back(new Lane(length));
+        this->lanes.push_back(new Lane(length));
     }
 }
 
-int Road::initializeCars(double percent_full) {
+int Road::initializeCars(double percent_full, unsigned int max_speed) {
     // Initialize each each Lane in the Road with cars with given percentage
-    for (int i = 0; i < lanes.size(); i++) {
-        lanes[i]->initializeCars(percent_full);
+    for (int i = 0; i < this->lanes.size(); i++) {
+        this->lanes[i]->initializeCars(percent_full, max_speed);
     }
 
     // Return with no errors
