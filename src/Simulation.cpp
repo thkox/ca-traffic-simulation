@@ -12,6 +12,9 @@ Simulation::Simulation(Inputs inputs) {
 
     // Initialize the cars in the Road and the list of Vehicle objects
     this->road_ptr->initializeCars(inputs, &(this->vehicles));
+
+    // Obtain the simulation inputs
+    this->inputs = inputs;
 }
 
 Simulation::~Simulation() {
@@ -24,13 +27,13 @@ Simulation::~Simulation() {
     }
 }
 
-int Simulation::run_simulation(unsigned int max_time) {
+int Simulation::run_simulation() {
     // Perform the simulation steps until the maximum time is reached
-    while (this->time < max_time) {
+    while (this->time < this->inputs.max_time) {
         // Perform the lane switch step for all vehicles
         for (int i = 0; i < this->vehicles.size(); i++) {
             this->vehicles[i]->updateGaps();
-            this->vehicles[i]->performLaneSwitch();
+            this->vehicles[i]->performLaneSwitch(this->road_ptr);
         }
 
         // Perform the independent lane updates

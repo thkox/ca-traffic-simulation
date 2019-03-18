@@ -17,6 +17,8 @@ public:
     unsigned int look_other_forward;
     unsigned int look_other_backward;
     double prob_slow_down;
+    double prob_change;
+    unsigned int max_time;
     int loadFromFile();
 };
 

@@ -6,6 +6,7 @@
 #define CA_TRAFFIC_SIMULATION_VEHICLE_H
 
 #include "Inputs.h"
+#include "Road.h"
 
 // Forward declarations
 class Lane;
@@ -23,11 +24,12 @@ private:
     unsigned int look_other_forward;
     unsigned int look_other_backward;
     double prob_slow_down;
+    double prob_change;
 
 public:
     Vehicle(Lane* lane_ptr, unsigned int initial_position, Inputs inputs);
     int updateGaps();
-    int performLaneSwitch();
+    int performLaneSwitch(Road* road_ptr);
     int performLaneMove();
 };
 

@@ -38,6 +38,10 @@ unsigned int Lane::getSize() {
     return this->sites.size();
 }
 
+unsigned int Lane::getLaneNumber() {
+    return this->lane_num;
+}
+
 bool Lane::hasVehicleInSite(unsigned int site) {
     if (this->sites[site]) {
         return true;
@@ -56,3 +60,32 @@ int Lane::moveVehicleInLane(unsigned int initial_site, unsigned int final_site) 
     // Return with zero errors
     return 0;
 }
+
+int Lane::addVehicleInLane(unsigned int site, Vehicle* vehicle) {
+    // Place the Vehicle object in the Lane at the specified site
+    this->sites[site] = vehicle;
+
+    // Return with zero errors
+    return 0;
+}
+
+int Lane::removeVehicleFromLane(unsigned int site) {
+    // Set the pointer to the Vehicle in the specified site to a null pointer
+    this->sites[site] = nullptr;
+
+    // Return with zero errors
+    return 0;
+}
+
+#ifdef DEBUG
+void Lane::printLane() {
+    for (int i = 0; i < this->getSize(); i++) {
+        if (this->sites[i]) {
+            std::cout << "1";
+        } else {
+            std::cout << "0";
+        }
+    }
+    std::cout << std::endl;
+}
+#endif

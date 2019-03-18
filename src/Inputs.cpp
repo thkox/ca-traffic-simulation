@@ -41,6 +41,8 @@ int Inputs::loadFromFile() {
     this->look_other_forward  = (unsigned int) std::stoi(parseLine(input_lines[5]));
     this->look_other_backward = (unsigned int) std::stoi(parseLine(input_lines[6]));
     this->prob_slow_down      =                std::stod(parseLine(input_lines[7]));
+    this->prob_change         =                std::stod(parseLine(input_lines[8]));
+    this->max_time            = (unsigned int) std::stoi(parseLine(input_lines[9]));
 
     // Close the input file
     input_file.close();

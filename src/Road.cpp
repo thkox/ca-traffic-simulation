@@ -28,3 +28,7 @@ int Road::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
     // Return with no errors
     return 0;
 }
+
+std::vector<Lane*> Road::getLanes() {
+    return this->lanes;
+}

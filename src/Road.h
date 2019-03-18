@@ -17,6 +17,7 @@ public:
     Road(Inputs inputs);
     ~Road();
     int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles);
+    std::vector<Lane*> getLanes();
 };
 
 

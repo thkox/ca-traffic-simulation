@@ -15,10 +15,11 @@ private:
     Road* road_ptr;
     unsigned int time;
     std::vector<Vehicle*> vehicles;
+    Inputs inputs;
 public:
     Simulation(Inputs inputs);
     ~Simulation();
-    int run_simulation(unsigned int max_time);
+    int run_simulation();
 };
 
 

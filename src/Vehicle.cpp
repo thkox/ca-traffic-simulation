@@ -6,6 +6,7 @@
 
 #include "Vehicle.h"
 #include "Lane.h"
+#include "Road.h"
 
 Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, Inputs inputs) {
     // Set the initial position of the Vehicle
@@ -28,6 +29,9 @@ Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, Inputs inputs) {
 
     // Set the slow down probability of the Vehicle
     this->prob_slow_down = inputs.prob_slow_down;
+
+    // Set the lane change probability of the Vehicle
+    this->prob_change = inputs.prob_change;
 }
 
 int Vehicle::updateGaps() {
@@ -47,8 +51,27 @@ int Vehicle::updateGaps() {
     return 0;
 }
 
-int Vehicle::performLaneSwitch() {
-    // TODO: Implement vehicle lane switch
+int Vehicle::performLaneSwitch(Road* road_ptr) {
+    // Evaluate if the Vehicle will change lanes and then perform the lane change
+    if (this->gap_forward < this->look_forward &&
+        this->gap_other_forward > this->look_other_forward &&
+        this->gap_other_backward > this->look_other_backward &&
+        ((double) rand()) / ((double) RAND_MAX) <= this->prob_change ) {
+
+        // Determine the lane that the Vehicle is switching to
+        Lane* other_lane;
+        if (this->lane_ptr->getLaneNumber() == 0) {
+            other_lane = road_ptr->getLanes()[1];
+        } else {
+            other_lane = road_ptr->getLanes()[0];
+        }
+
+        // Copy the Vehicle pointer to the other Lane
+        other_lane->addVehicleInLane(this->position, this);
+
+        // Remove the Vehicle pointer from the current Lane
+        this->lane_ptr->removeVehicleFromLane(this->position);
+    }
 
     // Return with zero errors
     return 0;

@@ -19,8 +19,14 @@ public:
     Lane(Inputs inputs, unsigned int lane_num);
     int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles);
     unsigned int getSize();
+    unsigned int getLaneNumber();
     bool hasVehicleInSite(unsigned int site);
     int moveVehicleInLane(unsigned int initial_site, unsigned int final_site);
+    int addVehicleInLane(unsigned int site, Vehicle* vehicle);
+    int removeVehicleFromLane(unsigned int site);
+#ifdef DEBUG
+    void printLane();
+#endif
 };
 
 
