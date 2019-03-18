@@ -4,7 +4,8 @@
 
 #include "Vehicle.h"
 
-Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max_speed) {
+Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max_speed, unsigned int look_forward,
+                 unsigned int look_other_forward, unsigned int look_other_backward) {
     // Set the initial position of the Vehicle
     this->position = initial_position;
 
