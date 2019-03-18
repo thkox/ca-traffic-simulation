@@ -20,18 +20,15 @@ Simulation::Simulation(unsigned int num_lanes, unsigned int length, double perce
 int Simulation::run_simulation(unsigned int max_time) {
     // Perform the simulation steps until the maximum time is reached
     while (this->time < max_time) {
-        // Update all vehicle gaps
-        for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->updateGaps();
-        }
-
         // Perform the lane switch step for all vehicles
         for (int i = 0; i < this->vehicles.size(); i++) {
+            this->vehicles[i]->updateGaps();
             this->vehicles[i]->performLaneSwitch();
         }
 
         // Perform the independent lane updates
         for (int i = 0; i < this->vehicles.size(); i++) {
+            this->vehicles[i]->updateGaps();
             this->vehicles[i]->performLaneMove();
         }
 
