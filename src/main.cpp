@@ -17,7 +17,7 @@ int main() {
 
     // Create a Simulation object for the current simulation
     // TODO: Add actual simulation paramters from input file
-    Simulation* simulation_ptr = new Simulation(0.5, 2, 10, 2);
+    Simulation* simulation_ptr = new Simulation(2, 10, 0.5, 5, 6, 6, 5);
 
     // Delete the Simulation object
     delete simulation_ptr;
