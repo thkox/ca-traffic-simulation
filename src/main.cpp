@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "Inputs.h"
 #include "Simulation.h"
 
 int main() {
@@ -15,14 +16,17 @@ int main() {
     srand(time(NULL));
 #endif
 
-    // TODO: Add actual simulation parameters from input file
+    // Create an Inputs object to contain the simulation parameters
+    Inputs inputs = Inputs();
+    if (inputs.loadFromFile() != 0) {
+        return 1;
+    }
 
     // Create a Simulation object for the current simulation
-    Simulation* simulation_ptr = new Simulation(2, 10, 0.5, 5, 6, 6, 5, 0.1);
+    Simulation* simulation_ptr = new Simulation(inputs);
 
     // Delete the Simulation object
     delete simulation_ptr;
 
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }

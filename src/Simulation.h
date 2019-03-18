@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Road.h"
+#include "Inputs.h"
 
 class Simulation {
 private:
@@ -15,9 +16,8 @@ private:
     unsigned int time;
     std::vector<Vehicle*> vehicles;
 public:
-    Simulation(unsigned int num_lanes, unsigned int length, double percent_full, unsigned int max_speed,
-               unsigned int look_forward, unsigned int look_other_forward, unsigned int look_other_backward,
-               double prob_slow_down);
+    Simulation(Inputs inputs);
+    ~Simulation();
     int run_simulation(unsigned int max_time);
 };
 

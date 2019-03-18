@@ -5,6 +5,7 @@
 #ifndef CA_TRAFFIC_SIMULATION_INPUTS_H
 #define CA_TRAFFIC_SIMULATION_INPUTS_H
 
+#include <iostream>
 
 class Inputs {
 public:

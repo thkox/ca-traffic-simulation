@@ -6,10 +6,11 @@
 
 #include "Lane.h"
 #include "Vehicle.h"
+#include "Inputs.h"
 
-Lane::Lane(unsigned int size, unsigned int lane_num) {
+Lane::Lane(Inputs inputs, unsigned int lane_num) {
     // Allocate memory in for the vehicle pointers
-    this->sites.reserve(size);
+    this->sites.reserve(inputs.length);
 
     // Initialize each Vehicle pointer in the Lane to a null pointer
     for (int i = 0; i < this->sites.size(); i++) {
@@ -20,14 +21,11 @@ Lane::Lane(unsigned int size, unsigned int lane_num) {
     this->lane_num = lane_num;
 }
 
-int Lane::initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles,
-                         unsigned int look_forward, unsigned int look_other_forward,
-                         unsigned int look_other_backward, double prob_slow_down) {
+int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
     // Initialize cars in the sites of the Lane with given percentage
     for (int i = 0; i < this->sites.size(); i++) {
-        if ( ((double) std::rand()) / ((double) RAND_MAX) <= percent_full ) {
-            this->sites[i] = new Vehicle(this, i, max_speed, look_forward, look_other_forward, look_other_backward,
-                                         prob_slow_down);
+        if ( ((double) std::rand()) / ((double) RAND_MAX) <= inputs.percent_full ) {
+            this->sites[i] = new Vehicle(this, i, inputs);
             vehicles->push_back(this->sites[i]);
         }
     }

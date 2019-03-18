@@ -6,6 +6,7 @@
 #define CA_TRAFFIC_SIMULATION_LANE_H
 
 #include <vector>
+#include "Inputs.h"
 
 // Forward Declarations
 class Vehicle;
@@ -15,10 +16,8 @@ private:
     std::vector<Vehicle*> sites;
     unsigned int lane_num;
 public:
-    Lane(unsigned int size, unsigned int lane_num);
-    int initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles,
-                       unsigned int look_forward, unsigned int look_other_forward, unsigned int look_other_backward,
-                       double prob_slow_down);
+    Lane(Inputs inputs, unsigned int lane_num);
+    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles);
     unsigned int getSize();
     bool hasVehicleInSite(unsigned int site);
     int moveVehicleInLane(unsigned int initial_site, unsigned int final_site);

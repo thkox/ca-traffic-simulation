@@ -6,15 +6,22 @@
 #include "Simulation.h"
 #include "Vehicle.h"
 
-Simulation::Simulation(unsigned int num_lanes, unsigned int length, double percent_full,
-                       unsigned int max_speed, unsigned int look_forward, unsigned int look_other_forward,
-                       unsigned int look_other_backward, double prob_slow_down) {
+Simulation::Simulation(Inputs inputs) {
     // Create the Road object for the simulation
-    this->road_ptr = new Road(num_lanes, length);
+    this->road_ptr = new Road(inputs);
 
     // Initialize the cars in the Road and the list of Vehicle objects
-    this->road_ptr->initializeCars(percent_full, max_speed, &(this->vehicles), look_forward, look_other_forward,
-                                   look_other_backward, prob_slow_down);
+    this->road_ptr->initializeCars(inputs, &(this->vehicles));
+}
+
+Simulation::~Simulation() {
+    // Delete the Road object in the simulation
+    delete this->road_ptr;
+
+    // Delete all the Vehicle objects in the Simulation
+    for (int i = 0; i < this->vehicles.size(); i++) {
+        delete this->vehicles[i];
+    }
 }
 
 int Simulation::run_simulation(unsigned int max_time) {

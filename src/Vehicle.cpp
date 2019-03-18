@@ -7,8 +7,7 @@
 #include "Vehicle.h"
 #include "Lane.h"
 
-Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max_speed, unsigned int look_forward,
-                 unsigned int look_other_forward, unsigned int look_other_backward, double prob_slow_down) {
+Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, Inputs inputs) {
     // Set the initial position of the Vehicle
     this->position = initial_position;
 
@@ -16,19 +15,19 @@ Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max
     this->lane_ptr = lane_ptr;
 
     // Set the maximum speed of the Vehicle
-    this->max_speed = max_speed;
+    this->max_speed = inputs.max_speed;
 
     // Set the look forward distance of the Vehicle
-    this->look_forward = look_forward;
+    this->look_forward = inputs.look_forward;
 
     // Set the other lane look forward distance of the Vehicle
-    this->look_other_forward = look_other_forward;
+    this->look_other_forward = inputs.look_other_forward;
 
     // Set the other lane look backward distance of the Vehicle
-    this->look_other_backward = look_other_backward;
+    this->look_other_backward = inputs.look_other_backward;
 
     // Set the slow down probability of the Vehicle
-    this->prob_slow_down = prob_slow_down;
+    this->prob_slow_down = inputs.prob_slow_down;
 }
 
 int Vehicle::updateGaps() {

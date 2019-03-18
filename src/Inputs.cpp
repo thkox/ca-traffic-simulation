@@ -4,13 +4,19 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <sstream>
 
 #include "Inputs.h"
+
+std::string parseLine(std::string line) {
+    return line.substr(0, line.find(' '));
+}
 
 int Inputs::loadFromFile() {
     // Open the input file for reading the simulation inputs
     std::fstream input_file;
-    input_file.open("cats-inuput.txt", std::fstream::in);
+    input_file.open("cats-input.txt", std::fstream::in);
 
     // Check of the input file was loaded properly
     if (!input_file) {
@@ -18,7 +24,23 @@ int Inputs::loadFromFile() {
         return 1;
     }
 
-    // TODO: Read in inputs to member variables
+    // Split the lines in the input file into a vector of strings
+    std::vector<std::string> input_lines;
+    std::string line;
+    while (std::getline(input_file, line))
+    {
+        input_lines.push_back(line);
+    }
+
+    // Parse each line of the input file into the variable it corresponds to
+    this->num_lanes           = (unsigned int) std::stoi(parseLine(input_lines[0]));
+    this->length              = (unsigned int) std::stoi(parseLine(input_lines[1]));
+    this->percent_full        =                std::stod(parseLine(input_lines[2]));
+    this->max_speed           = (unsigned int) std::stoi(parseLine(input_lines[3]));
+    this->look_forward        = (unsigned int) std::stoi(parseLine(input_lines[4]));
+    this->look_other_forward  = (unsigned int) std::stoi(parseLine(input_lines[5]));
+    this->look_other_backward = (unsigned int) std::stoi(parseLine(input_lines[6]));
+    this->prob_slow_down      =                std::stod(parseLine(input_lines[7]));
 
     // Close the input file
     input_file.close();
