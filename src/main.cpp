@@ -15,8 +15,9 @@ int main() {
     srand(time(NULL));
 #endif
 
+    // TODO: Add actual simulation parameters from input file
+
     // Create a Simulation object for the current simulation
-    // TODO: Add actual simulation paramters from input file
     Simulation* simulation_ptr = new Simulation(2, 10, 0.5, 5, 6, 6, 5, 0.1);
 
     // Delete the Simulation object
