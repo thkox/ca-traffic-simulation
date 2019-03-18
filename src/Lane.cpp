@@ -39,10 +39,22 @@ int Lane::initializeCars(double percent_full, unsigned int max_speed, std::vecto
 unsigned int Lane::getSize() {
     return this->sites.size();
 }
+
 bool Lane::hasVehicleInSite(unsigned int site) {
     if (this->sites[site]) {
         return true;
     } else {
         return false;
     }
+}
+
+int Lane::moveVehicleInLane(unsigned int initial_site, unsigned int final_site) {
+    // Copy the Vehicle pointer from the initial site to the final site
+    this->sites[final_site] = this->sites[initial_site];
+
+    // Remove the Vehicle pointer from the initial site
+    this->sites[initial_site] = nullptr;
+
+    // Return with zero errors
+    return 0;
 }

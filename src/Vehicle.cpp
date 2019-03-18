@@ -67,7 +67,14 @@ int Vehicle::performLaneMove() {
         }
     }
 
-    // TODO: Move vehicle based on speed
+    // Compute the new position of the vehicle
+    unsigned int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
+
+    // Update Vehicle position in the Lane object sites
+    this->lane_ptr->moveVehicleInLane(this->position, new_position);
+
+    // Update the Vehicle position value
+    this->position = new_position;
 
     // Return with no errors
     return 0;

@@ -21,6 +21,7 @@ public:
                        double prob_slow_down);
     unsigned int getSize();
     bool hasVehicleInSite(unsigned int site);
+    int moveVehicleInLane(unsigned int initial_site, unsigned int final_site);
 };
 
 
