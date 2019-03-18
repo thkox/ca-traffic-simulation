@@ -34,3 +34,14 @@ int Lane::initializeCars(double percent_full, unsigned int max_speed, std::vecto
     // Return with no errors
     return 0;
 }
+
+unsigned int Lane::getSize() {
+    return this->sites.size();
+}
+bool Lane::hasVehicleInSite(unsigned int site) {
+    if (this->sites[site]) {
+        return true;
+    } else {
+        return false;
+    }
+}
