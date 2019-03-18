@@ -16,7 +16,8 @@ private:
     std::vector<Vehicle*> vehicles;
 public:
     Simulation(unsigned int num_lanes, unsigned int length, double percent_full, unsigned int max_speed,
-               unsigned int look_forward, unsigned int look_other_forward, unsigned int look_other_backward);
+               unsigned int look_forward, unsigned int look_other_forward, unsigned int look_other_backward,
+               double prob_slow_down);
     int run_simulation(unsigned int max_time);
 };
 

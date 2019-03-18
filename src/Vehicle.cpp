@@ -2,11 +2,13 @@
  * Copyright (C) 2019 Maitreya Venkataswamy - All Rights Reserved
  */
 
+#include <cstdlib>
+
 #include "Vehicle.h"
 #include "Lane.h"
 
 Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max_speed, unsigned int look_forward,
-                 unsigned int look_other_forward, unsigned int look_other_backward) {
+                 unsigned int look_other_forward, unsigned int look_other_backward, double prob_slow_down) {
     // Set the initial position of the Vehicle
     this->position = initial_position;
 
@@ -24,6 +26,9 @@ Vehicle::Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max
 
     // Set the other lane look backward distance of the Vehicle
     this->look_other_backward = look_other_backward;
+
+    // Set the slow down probability of the Vehicle
+    this->prob_slow_down = prob_slow_down;
 }
 
 int Vehicle::updateGaps() {
@@ -51,7 +56,18 @@ int Vehicle::performLaneSwitch() {
 }
 
 int Vehicle::performLaneMove() {
-    // TODO: Implement vehicle lane move
+    // Update Vehicle speed based on vehicle speed update rules
+    if (this->speed != this->max_speed) {
+        this->speed++;
+    }
+    this->speed = std::min(this->speed, this->gap_forward);
+    if (this->speed > 0) {
+        if ( ((double) rand()) / ((double) RAND_MAX) <= this->prob_slow_down ) {
+            this->speed--;
+        }
+    }
+
+    // TODO: Move vehicle based on speed
 
     // Return with no errors
     return 0;

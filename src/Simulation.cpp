@@ -8,13 +8,13 @@
 
 Simulation::Simulation(unsigned int num_lanes, unsigned int length, double percent_full,
                        unsigned int max_speed, unsigned int look_forward, unsigned int look_other_forward,
-                       unsigned int look_other_backward) {
+                       unsigned int look_other_backward, double prob_slow_down) {
     // Create the Road object for the simulation
     this->road_ptr = new Road(num_lanes, length);
 
     // Initialize the cars in the Road and the list of Vehicle objects
     this->road_ptr->initializeCars(percent_full, max_speed, &(this->vehicles), look_forward, look_other_forward,
-                                   look_other_backward);
+                                   look_other_backward, prob_slow_down);
 }
 
 int Simulation::run_simulation(unsigned int max_time) {

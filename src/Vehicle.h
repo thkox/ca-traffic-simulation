@@ -20,10 +20,11 @@ private:
     unsigned int look_forward;
     unsigned int look_other_forward;
     unsigned int look_other_backward;
+    double prob_slow_down;
 
 public:
     Vehicle(Lane* lane_ptr, unsigned int initial_position, unsigned int max_speed, unsigned int look_forward,
-            unsigned int look_other_forward, unsigned int look_other_backward);
+            unsigned int look_other_forward, unsigned int look_other_backward, double prob_slow_down);
     int updateGaps();
     int performLaneSwitch();
     int performLaneMove();

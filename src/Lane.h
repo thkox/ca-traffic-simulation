@@ -17,7 +17,8 @@ private:
 public:
     Lane(unsigned int size, unsigned int lane_num);
     int initializeCars(double percent_full, unsigned int max_speed, std::vector<Vehicle*>* vehicles,
-                       unsigned int look_forward, unsigned int look_other_forward, unsigned int look_other_backward);
+                       unsigned int look_forward, unsigned int look_other_forward, unsigned int look_other_backward,
+                       double prob_slow_down);
     unsigned int getSize();
     bool hasVehicleInSite(unsigned int site);
 };
