@@ -25,6 +25,9 @@ int main() {
     // Create a Simulation object for the current simulation
     Simulation* simulation_ptr = new Simulation(inputs);
 
+    // Run the Simulation
+    simulation_ptr->run_simulation();
+
     // Delete the Simulation object
     delete simulation_ptr;
 

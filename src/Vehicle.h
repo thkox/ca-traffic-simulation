@@ -14,6 +14,7 @@ class Lane;
 class Vehicle {
 private:
     Lane* lane_ptr;
+    unsigned int id;
     unsigned int position;
     unsigned int speed;
     unsigned int max_speed;
@@ -27,10 +28,11 @@ private:
     double prob_change;
 
 public:
-    Vehicle(Lane* lane_ptr, unsigned int initial_position, Inputs inputs);
-    int updateGaps();
+    Vehicle(Lane* lane_ptr, unsigned int id, unsigned int initial_position, Inputs inputs);
+    int updateGaps(Road* road_ptr);
     int performLaneSwitch(Road* road_ptr);
     int performLaneMove();
+    unsigned int getId();
 };
 
 

@@ -17,7 +17,7 @@ Simulation::Simulation(Inputs inputs) {
     this->inputs = inputs;
 
 #ifdef DEBUG
-    std::cout << "Initial road configuration:" << std::endl;
+    std::cout << "initial road configuration:" << std::endl;
     this->road_ptr->printRoad();
 #endif
 }
@@ -37,18 +37,23 @@ int Simulation::run_simulation() {
     while (this->time < this->inputs.max_time) {
         // Perform the lane switch step for all vehicles
         for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->updateGaps();
+            this->vehicles[i]->updateGaps(this->road_ptr);
             this->vehicles[i]->performLaneSwitch(this->road_ptr);
         }
 
         // Perform the independent lane updates
         for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->updateGaps();
+            this->vehicles[i]->updateGaps(this->road_ptr);
             this->vehicles[i]->performLaneMove();
         }
 
         // Increment the simulation time
         this->time++;
+
+#ifdef DEBUG
+        std::cout << "road configuration at time " << time << ":" << std::endl;
+        this->road_ptr->printRoad();
+#endif
     }
 
     // Return with no errors

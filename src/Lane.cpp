@@ -3,6 +3,9 @@
  */
 
 #include <cstdlib>
+#include <cstdio>
+#include <sstream>
+#include <iomanip>
 
 #include "Lane.h"
 #include "Vehicle.h"
@@ -32,7 +35,11 @@ int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
     // Initialize cars in the sites of the Lane with given percentage
     for (int i = 0; i < this->sites.size(); i++) {
         if ( ((double) std::rand()) / ((double) RAND_MAX) <= inputs.percent_full ) {
-            this->sites[i] = new Vehicle(this, i, inputs);
+#ifdef DEBUG
+            std::cout << "creating vehicle " << vehicles->size() << " in lane " << this->lane_num << " at site " << i
+                << std::endl;
+#endif
+            this->sites[i] = new Vehicle(this, vehicles->size(), i, inputs);
             vehicles->push_back(this->sites[i]);
         }
     }
@@ -86,12 +93,15 @@ int Lane::removeVehicleFromLane(unsigned int site) {
 
 #ifdef DEBUG
 void Lane::printLane() {
-    for (int i = 0; i < this->getSize(); i++) {
+    std::ostringstream site_string_stream;
+    for (int i = 0; i < this->sites.size(); i++) {
+        site_string_stream.str(std::string());
         if (this->sites[i]) {
-            std::cout << "1";
+            site_string_stream << "[" << std::setw(2) << this->sites[i]->getId() << "]";
         } else {
-            std::cout << "0";
+            site_string_stream << "[  ]";
         }
+        std::cout << site_string_stream.str();
     }
     std::cout << std::endl;
 }
