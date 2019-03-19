@@ -41,6 +41,10 @@ int Simulation::run_simulation() {
             this->vehicles[i]->performLaneSwitch(this->road_ptr);
         }
 
+#ifdef DEBUG
+        this->road_ptr->printRoad();
+#endif
+
         // Perform the independent lane updates
         for (int i = 0; i < this->vehicles.size(); i++) {
             this->vehicles[i]->updateGaps(this->road_ptr);

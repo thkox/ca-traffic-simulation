@@ -21,6 +21,9 @@ Vehicle::Vehicle(Lane* lane_ptr, unsigned int id, unsigned int initial_position,
     // Set the maximum speed of the Vehicle
     this->max_speed = inputs.max_speed;
 
+    // Set the initial speed of the Vehicle to zero
+    this->speed = 0;
+
     // Set the look forward distance of the Vehicle
     this->look_forward = inputs.look_forward;
 
@@ -90,8 +93,8 @@ int Vehicle::performLaneSwitch(Road* road_ptr) {
         }
 
 #ifdef DEBUG
-        std::cout << "vehicle at " << this->position << " switched from " << this->lane_ptr->getLaneNumber() <<
-            " to " << other_lane_ptr->getLaneNumber() << std::endl;
+        std::cout << "vehicle at " << this->position << " switched lane " << this->lane_ptr->getLaneNumber() <<
+            " -> " << other_lane_ptr->getLaneNumber() << std::endl;
 #endif
 
         // Copy the Vehicle pointer to the other Lane
@@ -109,22 +112,36 @@ int Vehicle::performLaneMove() {
     // Update Vehicle speed based on vehicle speed update rules
     if (this->speed != this->max_speed) {
         this->speed++;
+#ifdef DEBUG
+        std::cout << "vehicle " << this->id << " increased speed " << this->speed - 1 << " -> " << this->speed
+            << std::endl;
+#endif
     }
     this->speed = std::min(this->speed, this->gap_forward);
     if (this->speed > 0) {
         if ( ((double) rand()) / ((double) RAND_MAX) <= this->prob_slow_down ) {
             this->speed--;
+#ifdef DEBUG
+            std::cout << "vehicle " << this->id << " decreased speed " << this->speed + 1 << " -> " << this->speed
+                << std::endl;
+#endif
         }
     }
 
-    // Compute the new position of the vehicle
-    unsigned int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
+    if (this->speed > 0) {
+        // Compute the new position of the vehicle
+        unsigned int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
 
-    // Update Vehicle position in the Lane object sites
-    this->lane_ptr->moveVehicleInLane(this->position, new_position);
+#ifdef DEBUG
+        std::cout << "vehicle " << this->id << " moved " << this->position << " -> " << new_position << std::endl;
+#endif
 
-    // Update the Vehicle position value
-    this->position = new_position;
+        // Update Vehicle position in the Lane object sites
+        this->lane_ptr->moveVehicleInLane(this->position, new_position);
+
+        // Update the Vehicle position value
+        this->position = new_position;
+    }
 
     // Return with no errors
     return 0;
