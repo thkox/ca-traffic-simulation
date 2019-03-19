@@ -9,8 +9,12 @@
 #include "Inputs.h"
 
 Lane::Lane(Inputs inputs, unsigned int lane_num) {
+#ifdef DEBUG
+    std::cout << "creating lane " << lane_num << "...";
+#endif
     // Allocate memory in for the vehicle pointers
     this->sites.reserve(inputs.length);
+    this->sites.resize(inputs.length);
 
     // Initialize each Vehicle pointer in the Lane to a null pointer
     for (int i = 0; i < this->sites.size(); i++) {
@@ -19,6 +23,9 @@ Lane::Lane(Inputs inputs, unsigned int lane_num) {
 
     // Set the lane number for the lane
     this->lane_num = lane_num;
+#ifdef DEBUG
+    std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
+#endif
 }
 
 int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {

@@ -15,6 +15,11 @@ Simulation::Simulation(Inputs inputs) {
 
     // Obtain the simulation inputs
     this->inputs = inputs;
+
+#ifdef DEBUG
+    std::cout << "Initial road configuration:" << std::endl;
+    this->road_ptr->printRoad();
+#endif
 }
 
 Simulation::~Simulation() {
