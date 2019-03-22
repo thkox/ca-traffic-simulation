@@ -7,6 +7,8 @@
 #include <sstream>
 #include <iomanip>
 
+#include <deque>
+
 #include "Lane.h"
 #include "Vehicle.h"
 #include "Inputs.h"
@@ -15,14 +17,9 @@ Lane::Lane(Inputs inputs, unsigned int lane_num) {
 #ifdef DEBUG
     std::cout << "creating lane " << lane_num << "...";
 #endif
-    // Allocate memory in for the vehicle pointers
+    // Allocate memory for the vehicle pointers list
     this->sites.reserve(inputs.length);
     this->sites.resize(inputs.length);
-
-    // Initialize each Vehicle pointer in the Lane to a null pointer
-    for (int i = 0; i < this->sites.size(); i++) {
-        this->sites[i] = nullptr;
-    }
 
     // Set the lane number for the lane
     this->lane_num = lane_num;
@@ -39,8 +36,8 @@ int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
             std::cout << "creating vehicle " << vehicles->size() << " in lane " << this->lane_num << " at site " << i
                 << std::endl;
 #endif
-            this->sites[i] = new Vehicle(this, vehicles->size(), i, inputs);
-            vehicles->push_back(this->sites[i]);
+            this->sites[i].push_back(new Vehicle(this, vehicles->size(), i, inputs));
+            vehicles->push_back(this->sites[i].front());
         }
     }
 
@@ -57,35 +54,31 @@ unsigned int Lane::getLaneNumber() {
 }
 
 bool Lane::hasVehicleInSite(unsigned int site) {
-    if (this->sites[site]) {
-        return true;
-    } else {
-        return false;
-    }
+    return !(this->sites[site].empty());
 }
 
 int Lane::moveVehicleInLane(unsigned int initial_site, unsigned int final_site) {
     // Copy the Vehicle pointer from the initial site to the final site
-    this->sites[final_site] = this->sites[initial_site];
+    this->sites[final_site].push_back(this->sites[initial_site].front());
 
     // Remove the Vehicle pointer from the initial site
-    this->sites[initial_site] = nullptr;
+    this->sites[initial_site].pop_front();
 
     // Return with zero errors
     return 0;
 }
 
-int Lane::addVehicleInLane(unsigned int site, Vehicle* vehicle) {
+int Lane::addVehicleInLane(unsigned int site, Vehicle* vehicle_ptr) {
     // Place the Vehicle object in the Lane at the specified site
-    this->sites[site] = vehicle;
+    this->sites[site].push_back(vehicle_ptr);
 
     // Return with zero errors
     return 0;
 }
 
 int Lane::removeVehicleFromLane(unsigned int site) {
-    // Set the pointer to the Vehicle in the specified site to a null pointer
-    this->sites[site] = nullptr;
+    // Remove the pointer to the Vehicle from the specified site
+    this->sites[site].pop_front();
 
     // Return with zero errors
     return 0;
@@ -93,16 +86,26 @@ int Lane::removeVehicleFromLane(unsigned int site) {
 
 #ifdef DEBUG
 void Lane::printLane() {
-    std::ostringstream site_string_stream;
+    std::ostringstream lane_string_stream;
     for (int i = 0; i < this->sites.size(); i++) {
-        site_string_stream.str(std::string());
-        if (this->sites[i]) {
-            site_string_stream << "[" << std::setw(2) << this->sites[i]->getId() << "]";
-        } else {
-            site_string_stream << "[  ]";
+
+        // TEMP
+        //std::cout << "site " << i << std::endl;
+
+        // TEMP
+        //std::cout << "is empty " << this->sites[i].empty() << std::endl;
+
+        // TEMP
+        for (int j = 0; j < this->sites[i].size(); j++) {
+        //    std::cout << "member " << this->sites[i][j] << std::endl;
         }
-        std::cout << site_string_stream.str();
+
+        if (this->sites[i].empty()) {
+            lane_string_stream << "[  ]";
+        } else {
+            lane_string_stream << "[" << std::setw(2) << this->sites[i].front()->getId() << "]";
+        }
     }
-    std::cout << std::endl;
+    std::cout << lane_string_stream.str() << std::endl;
 }
 #endif
