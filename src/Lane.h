@@ -5,8 +5,8 @@
 #ifndef CA_TRAFFIC_SIMULATION_LANE_H
 #define CA_TRAFFIC_SIMULATION_LANE_H
 
-#include <deque>
 #include <vector>
+#include <deque>
 
 #include "Inputs.h"
 
@@ -23,9 +23,8 @@ public:
     unsigned int getSize();
     unsigned int getLaneNumber();
     bool hasVehicleInSite(unsigned int site);
-    int moveVehicleInLane(unsigned int initial_site, unsigned int final_site);
-    int addVehicleInLane(unsigned int site, Vehicle* vehicle_ptr);
-    int removeVehicleFromLane(unsigned int site);
+    int addVehicle(unsigned int site, Vehicle* vehicle_ptr);
+    int removeVehicle(unsigned int site);
 #ifdef DEBUG
     void printLane();
 #endif

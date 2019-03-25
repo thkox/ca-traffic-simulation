@@ -98,10 +98,13 @@ int Vehicle::performLaneSwitch(Road* road_ptr) {
 #endif
 
         // Copy the Vehicle pointer to the other Lane
-        other_lane_ptr->addVehicleInLane(this->position, this);
+        other_lane_ptr->addVehicle(this->position, this);
 
         // Remove the Vehicle pointer from the current Lane
-        this->lane_ptr->removeVehicleFromLane(this->position);
+        this->lane_ptr->removeVehicle(this->position);
+
+        // Set the pointer to the Lane in the Vehicle to the new lane
+        this->lane_ptr = other_lane_ptr;
     }
 
     // Return with zero errors
@@ -137,7 +140,10 @@ int Vehicle::performLaneMove() {
 #endif
 
         // Update Vehicle position in the Lane object sites
-        this->lane_ptr->moveVehicleInLane(this->position, new_position);
+        this->lane_ptr->addVehicle(new_position, this);
+
+        // Remove vehicle from the old site
+        this->lane_ptr->removeVehicle(this->position);
 
         // Update the Vehicle position value
         this->position = new_position;
