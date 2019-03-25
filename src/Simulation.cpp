@@ -2,6 +2,7 @@
  * Copyright (C) 2019 Maitreya Venkataswamy - All Rights Reserved
  */
 
+#include <omp.h>
 #include "Road.h"
 #include "Simulation.h"
 #include "Vehicle.h"
@@ -28,6 +29,9 @@ Simulation::~Simulation() {
 }
 
 int Simulation::run_simulation() {
+    // Obtain the start time
+    double start_time = omp_get_wtime();
+
     // Perform the simulation steps until the maximum time is reached
     while (this->time < this->inputs.max_time) {
 #ifdef DEBUG
@@ -68,6 +72,12 @@ int Simulation::run_simulation() {
         // Increment the simulation time
         this->time++;
     }
+
+    // Print the total run time and average iterations per second and seconds per iteration
+    double end_time = omp_get_wtime();
+    std::cout << "total computation time: " << end_time - start_time  << " [s]" << std::endl;
+    std::cout << "average time per iteration: " << (end_time - start_time) / inputs.max_time << " [s]" << std::endl;
+    std::cout << "average iterating frequency: " << inputs.max_time / (end_time - start_time) << " [s^-1]" << std::endl;
 
     // Return with no errors
     return 0;
