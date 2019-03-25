@@ -19,7 +19,7 @@ private:
 public:
     Simulation(Inputs inputs);
     ~Simulation();
-    int run_simulation();
+    int run_simulation(int num_threads);
 };
 
 

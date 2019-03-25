@@ -28,56 +28,101 @@ Simulation::~Simulation() {
     }
 }
 
-int Simulation::run_simulation() {
+int Simulation::run_simulation(int num_threads) {
     // Obtain the start time
     double start_time = omp_get_wtime();
 
-    // Perform the simulation steps until the maximum time is reached
-    while (this->time < this->inputs.max_time) {
-#ifdef DEBUG
-        std::cout << "road configuration at time " << time << ":" << std::endl;
-        this->road_ptr->printRoad();
-        std::cout << "performing lane switches..." << std::endl;
-#endif
+    // Set the number of threads for the execution
+    omp_set_num_threads(num_threads);
 
-        // Perform the lane switch step for all vehicles
-        for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->updateGaps(this->road_ptr);
-#ifdef DEBUG
-            this->vehicles[i]->printGaps();
-#endif
-        }
-
-        for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->performLaneSwitch(this->road_ptr);
-        }
+    // Perform the simulation steps in parallel until the maximum time is reached
+    #pragma omp parallel
+    {
+        while (this->time < this->inputs.max_time) {
+            #pragma omp barrier
 
 #ifdef DEBUG
-        this->road_ptr->printRoad();
-        std::cout << "performing lane movements..." << std::endl;
+            if (omp_get_thread_num() == 0) {
+                std::cout << "road configuration at time " << time << ":" << std::endl;
+                this->road_ptr->printRoad();
+                std::cout << "performing lane switches..." << std::endl;
+            }
+            #pragma omp barrier
 #endif
 
-        // Perform the independent lane updates
-        for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->updateGaps(this->road_ptr);
+            // Perform the lane switch step for all vehicles
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+                int i = n * omp_get_num_threads() + omp_get_thread_num();
+
+                this->vehicles[i]->updateGaps(this->road_ptr);
 #ifdef DEBUG
-            this->vehicles[i]->printGaps();
+            #pragma omp critical
+                {
+                    this->vehicles[i]->printGaps();
+                }
 #endif
-        }
+            }
 
-        for (int i = 0; i < this->vehicles.size(); i++) {
-            this->vehicles[i]->performLaneMove();
-        }
+            #pragma omp barrier
 
-        // Increment the simulation time
-        this->time++;
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+                int i = n * omp_get_num_threads() + omp_get_thread_num();
+
+                this->vehicles[i]->performLaneSwitch(this->road_ptr);
+            }
+
+#ifdef DEBUG
+            #pragma omp barrier
+            if (omp_get_thread_num() == 0) {
+                this->road_ptr->printRoad();
+                std::cout << "performing lane movements..." << std::endl;
+            }
+#endif
+
+            #pragma omp barrier
+
+            // Perform the independent lane updates
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+                int i = n * omp_get_num_threads() + omp_get_thread_num();
+
+                this->vehicles[i]->updateGaps(this->road_ptr);
+#ifdef DEBUG
+            #pragma omp critical
+                {
+                    this->vehicles[i]->printGaps();
+                }
+#endif
+            }
+
+            #pragma omp barrier
+
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+                int i = n * omp_get_num_threads() + omp_get_thread_num();
+
+                this->vehicles[i]->performLaneMove();
+            }
+
+            // Increment the simulation time
+            if (omp_get_thread_num() == 0) {
+                this->time++;
+            }
+
+            #pragma omp barrier
+        }
     }
 
     // Print the total run time and average iterations per second and seconds per iteration
     double end_time = omp_get_wtime();
-    std::cout << "total computation time: " << end_time - start_time  << " [s]" << std::endl;
+    std::cout << "total computation time: " << end_time - start_time << " [s]" << std::endl;
     std::cout << "average time per iteration: " << (end_time - start_time) / inputs.max_time << " [s]" << std::endl;
-    std::cout << "average iterating frequency: " << inputs.max_time / (end_time - start_time) << " [s^-1]" << std::endl;
+    std::cout << "average iterating frequency: " << inputs.max_time / (end_time - start_time) << " [iter/s]"
+              << std::endl;
+
+#ifdef DEBUG
+    // Print final road configuration
+    std::cout << "final road configuration" << std::endl;
+    this->road_ptr->printRoad();
+#endif
 
     // Return with no errors
     return 0;
