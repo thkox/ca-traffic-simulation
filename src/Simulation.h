@@ -13,7 +13,7 @@
 class Simulation {
 private:
     Road* road_ptr;
-    unsigned int time;
+    int time;
     std::vector<Vehicle*> vehicles;
     Inputs inputs;
 public:

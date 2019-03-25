@@ -11,7 +11,7 @@
 #include "Vehicle.h"
 #include "Inputs.h"
 
-Lane::Lane(Inputs inputs, unsigned int lane_num) {
+Lane::Lane(Inputs inputs, int lane_num) {
 #ifdef DEBUG
     std::cout << "creating lane " << lane_num << "...";
 #endif
@@ -43,19 +43,19 @@ int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
     return 0;
 }
 
-unsigned int Lane::getSize() {
+int Lane::getSize() {
     return this->sites.size();
 }
 
-unsigned int Lane::getLaneNumber() {
+int Lane::getLaneNumber() {
     return this->lane_num;
 }
 
-bool Lane::hasVehicleInSite(unsigned int site) {
+bool Lane::hasVehicleInSite(int site) {
     return !(this->sites[site].empty());
 }
 
-int Lane::addVehicle(unsigned int site, Vehicle* vehicle_ptr) {
+int Lane::addVehicle(int site, Vehicle* vehicle_ptr) {
     // Place the Vehicle in the site
     this->sites[site].push_back(vehicle_ptr);
 
@@ -63,7 +63,7 @@ int Lane::addVehicle(unsigned int site, Vehicle* vehicle_ptr) {
     return 0;
 }
 
-int Lane::removeVehicle(unsigned int site) {
+int Lane::removeVehicle(int site) {
     // Remove the Vehicle from the site
     this->sites[site].pop_front();
 
@@ -75,7 +75,7 @@ int Lane::removeVehicle(unsigned int site) {
 void Lane::printLane() {
     std::ostringstream lane_string_stream;
     for (int i = 0; i < this->sites.size(); i++) {
-        if (this->sites[i].front() == nullptr) {
+        if (this->sites[i].empty()) {
             lane_string_stream << "[  ]";
         } else {
             lane_string_stream << "[" << std::setw(2) << this->sites[i].front()->getId() << "]";

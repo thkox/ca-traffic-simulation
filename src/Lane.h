@@ -16,15 +16,15 @@ class Vehicle;
 class Lane {
 private:
     std::vector<std::deque<Vehicle*>> sites;
-    unsigned int lane_num;
+    int lane_num;
 public:
-    Lane(Inputs inputs, unsigned int lane_num);
+    Lane(Inputs inputs, int lane_num);
     int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles);
-    unsigned int getSize();
-    unsigned int getLaneNumber();
-    bool hasVehicleInSite(unsigned int site);
-    int addVehicle(unsigned int site, Vehicle* vehicle_ptr);
-    int removeVehicle(unsigned int site);
+    int getSize();
+    int getLaneNumber();
+    bool hasVehicleInSite(int site);
+    int addVehicle(int site, Vehicle* vehicle_ptr);
+    int removeVehicle(int site);
 #ifdef DEBUG
     void printLane();
 #endif

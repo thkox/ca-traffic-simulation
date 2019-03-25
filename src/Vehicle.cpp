@@ -3,12 +3,13 @@
  */
 
 #include <cstdlib>
+#include <iomanip>
 
 #include "Vehicle.h"
 #include "Lane.h"
 #include "Road.h"
 
-Vehicle::Vehicle(Lane* lane_ptr, unsigned int id, unsigned int initial_position, Inputs inputs) {
+Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
     // Set the ID number of the Vehicle
     this->id = id;
 
@@ -46,10 +47,11 @@ int Vehicle::updateGaps(Road* road_ptr) {
     for (int i = 1; i < this->lane_ptr->getSize(); i++) {
         if (this->lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
             this->gap_forward = i - 1;
+            break;
         }
     }
 
-    // Determine the lane of interest
+    // Determine the other lane of interest
     Lane* other_lane_ptr;
     if (this->lane_ptr->getLaneNumber() == 0) {
         other_lane_ptr = road_ptr->getLanes()[1];
@@ -57,19 +59,22 @@ int Vehicle::updateGaps(Road* road_ptr) {
         other_lane_ptr = road_ptr->getLanes()[0];
     }
 
+    // TODO: Rewrite forward search to be more efficient
     // Update the forward gap in the other lane
     this->gap_other_forward = this->lane_ptr->getSize() - 1;
     for (int i = 0; i < this->lane_ptr->getSize(); i++) {
         if (other_lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
             this->gap_other_forward = i - 1;
+            break;
         }
     }
 
+    // TODO: Rewrite backward search to be more efficient
     // Update the backward gap in the other lane
     this->gap_other_backward = this->lane_ptr->getSize() - 1;
-    for (int i = 0; i < this->lane_ptr->getSize(); i++) {
-        if (other_lane_ptr->hasVehicleInSite((this->position-i) % this->lane_ptr->getSize())) {
-            this->gap_other_backward = i - 1;
+    for (int i = 0; i < this->lane_ptr->getSize() + 1; i++) {
+        if (other_lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
+            this->gap_other_backward = this->lane_ptr->getSize() - i - 1;
         }
     }
 
@@ -93,8 +98,8 @@ int Vehicle::performLaneSwitch(Road* road_ptr) {
         }
 
 #ifdef DEBUG
-        std::cout << "vehicle at " << this->position << " switched lane " << this->lane_ptr->getLaneNumber() <<
-            " -> " << other_lane_ptr->getLaneNumber() << std::endl;
+        std::cout << "vehicle " << this->id << " switched lane " << this->lane_ptr->getLaneNumber() << " -> "
+            << other_lane_ptr->getLaneNumber() << std::endl;
 #endif
 
         // Copy the Vehicle pointer to the other Lane
@@ -120,7 +125,14 @@ int Vehicle::performLaneMove() {
             << std::endl;
 #endif
     }
+
     this->speed = std::min(this->speed, this->gap_forward);
+#ifdef DEBUG
+    if (this->speed == 0) {
+        std::cout << "vehicle " << this->id << " stopped behind preceding vehicle" << std::endl;
+    }
+#endif
+
     if (this->speed > 0) {
         if ( ((double) rand()) / ((double) RAND_MAX) <= this->prob_slow_down ) {
             this->speed--;
@@ -133,7 +145,7 @@ int Vehicle::performLaneMove() {
 
     if (this->speed > 0) {
         // Compute the new position of the vehicle
-        unsigned int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
+        int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
 
 #ifdef DEBUG
         std::cout << "vehicle " << this->id << " moved " << this->position << " -> " << new_position << std::endl;
@@ -153,6 +165,13 @@ int Vehicle::performLaneMove() {
     return 0;
 }
 
-unsigned int Vehicle::getId() {
+int Vehicle::getId() {
     return this->id;
 }
+
+#ifdef DEBUG
+void Vehicle::printGaps() {
+    std::cout << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
+        << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
+}
+#endif

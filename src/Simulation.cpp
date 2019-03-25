@@ -15,11 +15,6 @@ Simulation::Simulation(Inputs inputs) {
 
     // Obtain the simulation inputs
     this->inputs = inputs;
-
-#ifdef DEBUG
-    std::cout << "initial road configuration:" << std::endl;
-    this->road_ptr->printRoad();
-#endif
 }
 
 Simulation::~Simulation() {
@@ -35,29 +30,43 @@ Simulation::~Simulation() {
 int Simulation::run_simulation() {
     // Perform the simulation steps until the maximum time is reached
     while (this->time < this->inputs.max_time) {
+#ifdef DEBUG
+        std::cout << "road configuration at time " << time << ":" << std::endl;
+        this->road_ptr->printRoad();
+        std::cout << "performing lane switches..." << std::endl;
+#endif
+
         // Perform the lane switch step for all vehicles
         for (int i = 0; i < this->vehicles.size(); i++) {
             this->vehicles[i]->updateGaps(this->road_ptr);
+#ifdef DEBUG
+            this->vehicles[i]->printGaps();
+#endif
+        }
+
+        for (int i = 0; i < this->vehicles.size(); i++) {
             this->vehicles[i]->performLaneSwitch(this->road_ptr);
         }
 
 #ifdef DEBUG
         this->road_ptr->printRoad();
+        std::cout << "performing lane movements..." << std::endl;
 #endif
 
         // Perform the independent lane updates
         for (int i = 0; i < this->vehicles.size(); i++) {
             this->vehicles[i]->updateGaps(this->road_ptr);
+#ifdef DEBUG
+            this->vehicles[i]->printGaps();
+#endif
+        }
+
+        for (int i = 0; i < this->vehicles.size(); i++) {
             this->vehicles[i]->performLaneMove();
         }
 
         // Increment the simulation time
         this->time++;
-
-#ifdef DEBUG
-        std::cout << "road configuration at time " << time << ":" << std::endl;
-        this->road_ptr->printRoad();
-#endif
     }
 
     // Return with no errors
