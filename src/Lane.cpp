@@ -28,7 +28,7 @@ Lane::Lane(Inputs inputs, int lane_num) {
 
 int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
     // Initialize cars in the sites of the Lane with given percentage
-    for (int i = 0; i < this->sites.size(); i++) {
+    for (int i = 0; i < (int) this->sites.size(); i++) {
         if ( ((double) std::rand()) / ((double) RAND_MAX) <= inputs.percent_full ) {
 #ifdef DEBUG
             std::cout << "creating vehicle " << vehicles->size() << " in lane " << this->lane_num << " at site " << i
@@ -74,11 +74,11 @@ int Lane::removeVehicle(int site) {
 #ifdef DEBUG
 void Lane::printLane() {
     std::ostringstream lane_string_stream;
-    for (int i = 0; i < this->sites.size(); i++) {
+    for (int i = 0; i < (int) this->sites.size(); i++) {
         if (this->sites[i].empty()) {
-            lane_string_stream << "[  ]";
+            lane_string_stream << "[   ]";
         } else {
-            lane_string_stream << "[" << std::setw(2) << this->sites[i].front()->getId() << "]";
+            lane_string_stream << "[" << std::setw(3) << this->sites[i].front()->getId() << "]";
         }
     }
     std::cout << lane_string_stream.str() << std::endl;

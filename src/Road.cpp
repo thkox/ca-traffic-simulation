@@ -20,14 +20,14 @@ Road::Road(Inputs inputs) {
 
 Road::~Road() {
     // Delete the Lane objects of the Road
-    for (int i = 0; i < this->lanes.size(); i++) {
+    for (int i = 0; i < (int) this->lanes.size(); i++) {
         delete this->lanes[i];
     }
 }
 
 int Road::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
     // Initialize each each Lane in the Road with cars with given percentage
-    for (int i = 0; i < this->lanes.size(); i++) {
+    for (int i = 0; i < (int) this->lanes.size(); i++) {
         this->lanes[i]->initializeCars(inputs, vehicles);
     }
 
