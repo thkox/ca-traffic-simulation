@@ -23,7 +23,7 @@ Simulation::~Simulation() {
     delete this->road_ptr;
 
     // Delete all the Vehicle objects in the Simulation
-    for (int i = 0; i < this->vehicles.size(); i++) {
+    for (int i = 0; i < (int) this->vehicles.size(); i++) {
         delete this->vehicles[i];
     }
 }
@@ -52,7 +52,7 @@ int Simulation::run_simulation(int num_threads) {
 #endif
 
             // Perform the lane switch step for all vehicles
-            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < (int) this->vehicles.size(); n++) {
                 int i = n * omp_get_num_threads() + omp_get_thread_num();
 
                 this->vehicles[i]->updateGaps(this->road_ptr);
@@ -66,7 +66,7 @@ int Simulation::run_simulation(int num_threads) {
 
             #pragma omp barrier
 
-            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < (int) this->vehicles.size(); n++) {
                 int i = n * omp_get_num_threads() + omp_get_thread_num();
 
                 this->vehicles[i]->performLaneSwitch(this->road_ptr);
@@ -83,7 +83,7 @@ int Simulation::run_simulation(int num_threads) {
             #pragma omp barrier
 
             // Perform the independent lane updates
-            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < (int) this->vehicles.size(); n++) {
                 int i = n * omp_get_num_threads() + omp_get_thread_num();
 
                 this->vehicles[i]->updateGaps(this->road_ptr);
@@ -97,7 +97,7 @@ int Simulation::run_simulation(int num_threads) {
 
             #pragma omp barrier
 
-            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < this->vehicles.size(); n++) {
+            for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < (int) this->vehicles.size(); n++) {
                 int i = n * omp_get_num_threads() + omp_get_thread_num();
 
                 this->vehicles[i]->performLaneMove();
