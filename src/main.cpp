@@ -31,9 +31,9 @@ int main(int argc, char** argv) {
     srand(time(NULL));
 #endif
 
-#ifdef DEBUG
-    num_threads = 1;
-#endif
+//#ifdef DEBUG
+//    num_threads = 1;
+//#endif
 
     // Create an Inputs object to contain the simulation parameters
     Inputs inputs = Inputs();
