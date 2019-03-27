@@ -7,6 +7,7 @@
 
 #include "Inputs.h"
 #include "Road.h"
+#include "Statistic.h"
 
 // Forward declarations
 class Lane;
@@ -26,13 +27,17 @@ private:
     int look_other_backward;
     double prob_slow_down;
     double prob_change;
+    int time_on_road;
+    Statistic* time_on_road_stat_ptr;
 
 public:
     Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs);
+    ~Vehicle();
     int updateGaps(Road* road_ptr);
     int performLaneSwitch(Road* road_ptr);
     int performLaneMove();
     int getId();
+    double getAverageTimeOnRoad();
 
 #ifdef DEBUG
     void printGaps();

@@ -123,6 +123,12 @@ int Simulation::run_simulation(int num_threads) {
     // Print final road configuration
     std::cout << "final road configuration" << std::endl;
     this->road_ptr->printRoad();
+
+    // Print the average time on the Road for all the Vehicle objects
+    for (int i = 0; i < (int) this->vehicles.size(); i++) {
+        std::cout << "vehicle " << this->vehicles[i]->getId() << " spent average of "
+                  << this->vehicles[i]->getAverageTimeOnRoad() << " steps on the road" << std::endl;
+    }
 #endif
 
     // Return with no errors

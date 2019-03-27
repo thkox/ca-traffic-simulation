@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <iomanip>
 
+#include "Statistic.h"
 #include "Vehicle.h"
 #include "Lane.h"
 #include "Road.h"
@@ -39,6 +40,14 @@ Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
 
     // Set the lane change probability of the Vehicle
     this->prob_change = inputs.prob_change;
+
+    // Initialize a statistic for the average tim on the road
+    this->time_on_road_stat_ptr = new Statistic();
+}
+
+Vehicle::~Vehicle() {
+    // Destroy the time on road Statistic
+    delete this->time_on_road_stat_ptr;
 }
 
 int Vehicle::updateGaps(Road* road_ptr) {
@@ -151,6 +160,15 @@ int Vehicle::performLaneMove() {
         std::cout << "vehicle " << this->id << " moved " << this->position << " -> " << new_position << std::endl;
 #endif
 
+        // Reset the time on road counter if the Vehicle reached the end of the Road and update the Statistic
+        if (this->position > new_position) {
+#ifdef DEBUG
+            std::cout << "vehicle " << this->id << " spent " << this->time_on_road << " steps on the road" << std::endl;
+#endif
+            this->time_on_road_stat_ptr->addValue(this->time_on_road);
+            this->time_on_road = 0;
+        }
+
         // Update Vehicle position in the Lane object sites
         this->lane_ptr->addVehicle(new_position, this);
 
@@ -161,12 +179,20 @@ int Vehicle::performLaneMove() {
         this->position = new_position;
     }
 
+    // Increment the time on road counter
+    this->time_on_road++;
+
     // Return with no errors
     return 0;
 }
 
 int Vehicle::getId() {
     return this->id;
+}
+
+double Vehicle::getAverageTimeOnRoad() {
+    // Compute and return the average time on the Road
+    return this->time_on_road_stat_ptr->getAverage();
 }
 
 #ifdef DEBUG
