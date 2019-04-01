@@ -22,7 +22,8 @@ Contents:
 
 This software uses cellular automata to simulate the movement of vehicles
 through a two lane road. The software uses OpenMP for parallelization of the
-simulation.
+simulation, and has a release mode for maximum performance, and a debug mode
+for debugging the software.
 
 The software requires the GNU C compiler with OpenMP enabled.
 
