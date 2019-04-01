@@ -1,0 +1,10 @@
+2       # number of lanes
+10      # length of the road in sites
+0.5     # percentage of the road occupied by vehicles
+5       # maximum speed
+6       # forward look distance in lane
+6       # forward look distance in other lane
+5       # backward look distance in other lane
+0.3     # probability of slowing down
+0.75    # probability of changing lanes
+1000    # maximum simulation steps
