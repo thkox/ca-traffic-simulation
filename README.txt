@@ -10,20 +10,21 @@
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-Author          : Maitreya Venkataswamy
-Created         : April 1, 2019
-Last Modified   : April 1, 2019
+Copyright (C) 2019 Maitreya Venkataswamy - All Rights Reserved
 
-Affiliation     : Georgia Institute of Technology
+Author        : Maitreya Venkataswamy
+Created       : April 1, 2019
+Last Modified : April 1, 2019
+
+Affiliation   : Georgia Institute of Technology
 
 Contents:
-1. SOFTWARE DESCRIPTION
-2. INSTALLATION - RELEASE
-3. INSTALLATION - DEBUG
-4. EXECUTION
+    1. SOFTWARE DESCRIPTION
+    2. INSTALLATION
+    3. EXECUTION
 
 -------------------------------------------------------------------------------
-                        1. SOFTWARE DESCRIPTION
+                            1. SOFTWARE DESCRIPTION
 -------------------------------------------------------------------------------
 
 This software uses cellular automata to simulate the movement of vehicles
@@ -31,10 +32,11 @@ through a two lane road. The software uses OpenMP for parallelization of the
 simulation, and has a release mode for maximum performance, and a debug mode
 for debugging the software.
 
-The software requires the GNU C compiler with OpenMP enabled.
+The software requires a GNU C++ compiler supporting C++17 with OpenMP enabled.
+The software requres CMake 3.9 or higher to build the program.
 
 -------------------------------------------------------------------------------
-                        2. INSTALLATION - RELEASE
+                                2. INSTALLATION
 -------------------------------------------------------------------------------
 
 To build the vortex simulation program, run the following commands
@@ -45,16 +47,12 @@ To build the vortex simulation program, run the following commands
 
 This will build the executable "cats".
 
--------------------------------------------------------------------------------
-                        3. INSTALLATION - DEBUG
--------------------------------------------------------------------------------
-
 To build the vortex simulation program in debug mode, run the following
 commands
 
-$ mkdir build; cd build
-$ cmake ../. -DCMAKE_BUILD_TYPE=Debug
-$ make
+    $ mkdir build; cd build
+    $ cmake ../. -DCMAKE_BUILD_TYPE=Debug
+    $ make
 
 This will build the executable "cats" in debug mode. The debug mode makes the
 following modifications to the program:
@@ -67,7 +65,7 @@ following modifications to the program:
         each step in the simulation.
 
 -------------------------------------------------------------------------------
-                            4. EXECUTION
+                                3. EXECUTION
 -------------------------------------------------------------------------------
 
 To run the simulation program, copy the executable file "cats" into a directory
@@ -77,4 +75,6 @@ included in the root directory of the repository.
 
     $ ./cats <nthread>
 
-where <nthread> is the number of threads that you want to run the program with.
+where:
+    
+    <nthread> - the number of threads that you want to run the program with.
