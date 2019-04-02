@@ -1,3 +1,0 @@
-/Users/maitreya/Desktop/ca-traffic-simulation/cmake-build-release/CMakeFiles/rebuild_cache.dir
-/Users/maitreya/Desktop/ca-traffic-simulation/cmake-build-release/CMakeFiles/edit_cache.dir
-/Users/maitreya/Desktop/ca-traffic-simulation/cmake-build-release/CMakeFiles/cats.dir
