@@ -36,6 +36,9 @@ int Simulation::run_simulation(int num_threads) {
     omp_set_num_threads(num_threads);
     std::cout << "number of threads for simulation: " << num_threads << std::endl;
 
+    // Set the simulation time to zero
+    this->time = 0;
+
     // Perform the simulation steps in parallel until the maximum time is reached
     #pragma omp parallel
     {
