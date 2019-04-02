@@ -39,8 +39,8 @@ The software requires the GNU C compiler with OpenMP enabled.
 
 To build the vortex simulation program, run the following commands
 
-    $ cd cmake-build-release
-    $ cmake .
+    $ mkdir build; cd build
+    $ cmake ../.
     $ make
 
 This will build the executable "cats".
@@ -52,9 +52,9 @@ This will build the executable "cats".
 To build the vortex simulation program in debug mode, run the following
 commands
 
-    $ cd cmake-build-debug
-    $ cmake .
-    $ make
+$ mkdir build; cd build
+$ cmake ../. -DCMAKE_BUILD_TYPE=Debug
+$ make
 
 This will build the executable "cats" in debug mode. The debug mode makes the
 following modifications to the program:
@@ -73,7 +73,7 @@ following modifications to the program:
 To run the simulation program, copy the executable file "cats" into a directory
 where you want to run the simulation. A configuration file "cate-input.txt"
 needs to be placed alongside the executable. A sample configuration file is
-included in both of the build folders where the executable was created.
+included in the root directory of the repository.
 
     $ ./cats <nthread>
 
