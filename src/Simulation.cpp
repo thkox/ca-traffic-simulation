@@ -117,6 +117,7 @@ int Simulation::run_simulation(int num_threads) {
 
     // Print the total run time and average iterations per second and seconds per iteration
     double end_time = omp_get_wtime();
+    std::cout << "--- Simulation Performance ---" << std::endl;
     std::cout << "total computation time: " << end_time - start_time << " [s]" << std::endl;
     std::cout << "average time per iteration: " << (end_time - start_time) / inputs.max_time << " [s]" << std::endl;
     std::cout << "average iterating frequency: " << inputs.max_time / (end_time - start_time) << " [iter/s]"
@@ -133,6 +134,9 @@ int Simulation::run_simulation(int num_threads) {
                   << this->vehicles[i]->getAverageTimeOnRoad() << " steps on the road" << std::endl;
     }
 #endif
+
+    // Print the average Vehicle time on the Road
+    std::cout << "--- Simulation Results ---" << std::endl;
 
     // Return with no errors
     return 0;
