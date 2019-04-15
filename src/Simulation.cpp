@@ -120,6 +120,8 @@ int Simulation::run_simulation(int num_threads) {
                 }
             }
 
+            #pragma omp barrier
+
             // Increment the simulation time and remove finished vehicles
             if (omp_get_thread_num() == 0) {
                 this->time++;
