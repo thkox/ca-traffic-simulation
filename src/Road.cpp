@@ -16,6 +16,12 @@ Road::Road(Inputs inputs) {
 #ifdef DEBUG
     std::cout << "done creating road" << std::endl;
 #endif
+
+    this->interarrival_time_cdf = new CDF();
+    int status = this->interarrival_time_cdf->read_cdf("interarrival-cdf.dat");
+    if (status != 0) {
+        throw 1;
+    }
 }
 
 Road::~Road() {

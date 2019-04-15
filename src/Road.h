@@ -9,10 +9,12 @@
 
 #include "Lane.h"
 #include "Inputs.h"
+#include "CDF.h"
 
 class Road {
 private:
     std::vector<Lane*> lanes;
+    CDF* interarrival_time_cdf;
 public:
     Road(Inputs inputs);
     ~Road();
