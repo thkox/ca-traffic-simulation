@@ -19,6 +19,7 @@ public:
     double prob_slow_down;
     double prob_change;
     int max_time;
+    double step_size;
     int loadFromFile();
 };
 

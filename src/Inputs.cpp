@@ -43,6 +43,7 @@ int Inputs::loadFromFile() {
     this->prob_slow_down      = std::stod(parseLine(input_lines[7]));
     this->prob_change         = std::stod(parseLine(input_lines[8]));
     this->max_time            = std::stoi(parseLine(input_lines[9]));
+    this->step_size           = std::stod(parseLine(input_lines[10]));
 
     // Close the input file
     input_file.close();
