@@ -27,10 +27,10 @@ Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
     this->speed = 0;
 
     // Set the look forward distance of the Vehicle
-    this->look_forward = inputs.look_forward;
+    this->look_forward = this->speed + 1;
 
     // Set the other lane look forward distance of the Vehicle
-    this->look_other_forward = inputs.look_other_forward;
+    this->look_other_forward = this->look_forward;
 
     // Set the other lane look backward distance of the Vehicle
     this->look_other_backward = inputs.look_other_backward;
@@ -59,6 +59,10 @@ int Vehicle::updateGaps(Road* road_ptr) {
             break;
         }
     }
+
+    // Update vehicle look forward distances
+    this->look_forward = this->speed + 1;
+    this->look_other_forward = this->look_forward;
 
     // Determine the other lane of interest
     Lane* other_lane_ptr;
