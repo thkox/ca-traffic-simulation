@@ -19,7 +19,7 @@ private:
     int lane_num;
 public:
     Lane(Inputs inputs, int lane_num);
-    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles);
+    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
     int getSize();
     int getLaneNumber();
     bool hasVehicleInSite(int site);

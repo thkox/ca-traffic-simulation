@@ -12,8 +12,11 @@ Simulation::Simulation(Inputs inputs) {
     // Create the Road object for the simulation
     this->road_ptr = new Road(inputs);
 
+    // Initialize the first Vehicle id
+    this->next_id = 0;
+
     // Initialize the cars in the Road and the list of Vehicle objects
-    this->road_ptr->initializeCars(inputs, &(this->vehicles));
+    this->road_ptr->initializeCars(inputs, &(this->vehicles), &this->next_id);
 
     // Obtain the simulation inputs
     this->inputs = inputs;

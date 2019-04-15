@@ -16,7 +16,7 @@ private:
 public:
     Road(Inputs inputs);
     ~Road();
-    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles);
+    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
     std::vector<Lane*> getLanes();
 
 #ifdef DEBUG

@@ -16,6 +16,7 @@ private:
     int time;
     std::vector<Vehicle*> vehicles;
     Inputs inputs;
+    int next_id;
 public:
     Simulation(Inputs inputs);
     ~Simulation();

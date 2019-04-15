@@ -26,7 +26,7 @@ Lane::Lane(Inputs inputs, int lane_num) {
 #endif
 }
 
-int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
+int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr) {
     // Initialize cars in the sites of the Lane with given percentage
     for (int i = 0; i < (int) this->sites.size(); i++) {
         if ( ((double) std::rand()) / ((double) RAND_MAX) <= inputs.percent_full ) {
@@ -34,7 +34,8 @@ int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles) {
             std::cout << "creating vehicle " << vehicles->size() << " in lane " << this->lane_num << " at site " << i
                 << std::endl;
 #endif
-            this->sites[i].push_back(new Vehicle(this, vehicles->size(), i, inputs));
+            this->sites[i].push_back(new Vehicle(this, *next_id_ptr, i, inputs));
+            (*next_id_ptr)++;
             vehicles->push_back(this->sites[i].front());
         }
     }
