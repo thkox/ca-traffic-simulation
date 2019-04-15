@@ -3,6 +3,7 @@
  */
 
 #include <omp.h>
+#include <algorithm>
 #include "Road.h"
 #include "Simulation.h"
 #include "Vehicle.h"
@@ -38,6 +39,9 @@ int Simulation::run_simulation(int num_threads) {
 
     // Set the simulation time to zero
     this->time = 0;
+
+    // Declare a vector for vehicles to be removed each step
+    std::vector<int> vehicles_to_remove;
 
     // Perform the simulation steps in parallel until the maximum time is reached
     #pragma omp parallel
@@ -103,12 +107,25 @@ int Simulation::run_simulation(int num_threads) {
             for (int n = 0; n * omp_get_num_threads() + omp_get_thread_num() < (int) this->vehicles.size(); n++) {
                 int i = n * omp_get_num_threads() + omp_get_thread_num();
 
-                this->vehicles[i]->performLaneMove();
+                int time_on_road = this->vehicles[i]->performLaneMove();
+
+                if (time_on_road != 0) {
+                    #pragma omp critical
+                    {
+                        vehicles_to_remove.push_back(i);
+                    }
+                }
             }
 
-            // Increment the simulation time
+            // Increment the simulation time and remove finished vehicles
             if (omp_get_thread_num() == 0) {
                 this->time++;
+                std::sort(vehicles_to_remove.begin(), vehicles_to_remove.end());
+                for (int i = vehicles_to_remove.size() - 1; i >= 0; i--) {
+                    delete this->vehicles[vehicles_to_remove[i]];
+                    this->vehicles.erase(this->vehicles.begin() + vehicles_to_remove[i]);
+                }
+                vehicles_to_remove.clear();
             }
 
             #pragma omp barrier
@@ -127,12 +144,6 @@ int Simulation::run_simulation(int num_threads) {
     // Print final road configuration
     std::cout << "final road configuration" << std::endl;
     this->road_ptr->printRoad();
-
-    // Print the average time on the Road for all the Vehicle objects
-    for (int i = 0; i < (int) this->vehicles.size(); i++) {
-        std::cout << "vehicle " << this->vehicles[i]->getId() << " spent average of "
-                  << this->vehicles[i]->getAverageTimeOnRoad() << " steps on the road" << std::endl;
-    }
 #endif
 
     // Print the average Vehicle time on the Road

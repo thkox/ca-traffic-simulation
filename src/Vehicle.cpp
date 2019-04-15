@@ -40,15 +40,9 @@ Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
 
     // Set the lane change probability of the Vehicle
     this->prob_change = inputs.prob_change;
-
-    // Initialize a statistic for the average tim on the road
-    this->time_on_road_stat_ptr = new Statistic();
 }
 
-Vehicle::~Vehicle() {
-    // Destroy the time on road Statistic
-    delete this->time_on_road_stat_ptr;
-}
+Vehicle::~Vehicle() {}
 
 int Vehicle::updateGaps(Road* road_ptr) {
     // Locate the preceding Vehicle and update the forward gap
@@ -130,6 +124,9 @@ int Vehicle::performLaneSwitch(Road* road_ptr) {
 }
 
 int Vehicle::performLaneMove() {
+    // Increment the time on road counter
+    this->time_on_road++;
+
     // Update Vehicle speed based on vehicle speed update rules
     if (this->speed != this->max_speed) {
         this->speed++;
@@ -160,18 +157,22 @@ int Vehicle::performLaneMove() {
         // Compute the new position of the vehicle
         int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
 
-#ifdef DEBUG
-        std::cout << "vehicle " << this->id << " moved " << this->position << " -> " << new_position << std::endl;
-#endif
-
-        // Reset the time on road counter if the Vehicle reached the end of the Road and update the Statistic
+        // If the vehicle reached the end of the road, remove the Vehicle from the Lane and return the time on road
         if (this->position > new_position) {
 #ifdef DEBUG
             std::cout << "vehicle " << this->id << " spent " << this->time_on_road << " steps on the road" << std::endl;
 #endif
-            this->time_on_road_stat_ptr->addValue(this->time_on_road);
-            this->time_on_road = 0;
+
+            // Remove vehicle from the Road
+            this->lane_ptr->removeVehicle(this->position);
+
+            // Return the time on the Road
+            return this->time_on_road;
         }
+
+#ifdef DEBUG
+        std::cout << "vehicle " << this->id << " moved " << this->position << " -> " << new_position << std::endl;
+#endif
 
         // Update Vehicle position in the Lane object sites
         this->lane_ptr->addVehicle(new_position, this);
@@ -183,20 +184,12 @@ int Vehicle::performLaneMove() {
         this->position = new_position;
     }
 
-    // Increment the time on road counter
-    this->time_on_road++;
-
     // Return with no errors
     return 0;
 }
 
 int Vehicle::getId() {
     return this->id;
-}
-
-double Vehicle::getAverageTimeOnRoad() {
-    // Compute and return the average time on the Road
-    return this->time_on_road_stat_ptr->getAverage();
 }
 
 #ifdef DEBUG

@@ -28,7 +28,6 @@ private:
     double prob_slow_down;
     double prob_change;
     int time_on_road;
-    Statistic* time_on_road_stat_ptr;
 
 public:
     Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs);
@@ -37,7 +36,6 @@ public:
     int performLaneSwitch(Road* road_ptr);
     int performLaneMove();
     int getId();
-    double getAverageTimeOnRoad();
 
 #ifdef DEBUG
     void printGaps();
