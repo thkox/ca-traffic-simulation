@@ -40,6 +40,9 @@ Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
 
     // Set the lane change probability of the Vehicle
     this->prob_change = inputs.prob_change;
+
+    // Initialize the time spend on the Road
+    this->time_on_road = 0;
 }
 
 Vehicle::~Vehicle() {}
