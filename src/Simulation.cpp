@@ -15,9 +15,6 @@ Simulation::Simulation(Inputs inputs) {
     // Initialize the first Vehicle id
     this->next_id = 0;
 
-    // Initialize the cars in the Road and the list of Vehicle objects
-    this->road_ptr->initializeCars(inputs, &(this->vehicles), &this->next_id);
-
     // Obtain the simulation inputs
     this->inputs = inputs;
 }

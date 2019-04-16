@@ -21,7 +21,6 @@ private:
     int steps_to_spawn;
 public:
     Lane(Inputs inputs, int lane_num);
-    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
     int getSize();
     int getLaneNumber();
     bool hasVehicleInSite(int site);

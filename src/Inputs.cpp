@@ -33,17 +33,17 @@ int Inputs::loadFromFile() {
     }
 
     // Parse each line of the input file into the variable it corresponds to
-    this->num_lanes           = std::stoi(parseLine(input_lines[0]));
-    this->length              = std::stoi(parseLine(input_lines[1]));
-    this->percent_full        = std::stod(parseLine(input_lines[2]));
-    this->max_speed           = std::stoi(parseLine(input_lines[3]));
-    this->look_forward        = std::stoi(parseLine(input_lines[4]));
-    this->look_other_forward  = std::stoi(parseLine(input_lines[5]));
-    this->look_other_backward = std::stoi(parseLine(input_lines[6]));
-    this->prob_slow_down      = std::stod(parseLine(input_lines[7]));
-    this->prob_change         = std::stod(parseLine(input_lines[8]));
-    this->max_time            = std::stoi(parseLine(input_lines[9]));
-    this->step_size           = std::stod(parseLine(input_lines[10]));
+    int n = 0;
+    this->num_lanes           = std::stoi(parseLine(input_lines[n++]));
+    this->length              = std::stoi(parseLine(input_lines[n++]));
+    this->max_speed           = std::stoi(parseLine(input_lines[n++]));
+    this->look_forward        = std::stoi(parseLine(input_lines[n++]));
+    this->look_other_forward  = std::stoi(parseLine(input_lines[n++]));
+    this->look_other_backward = std::stoi(parseLine(input_lines[n++]));
+    this->prob_slow_down      = std::stod(parseLine(input_lines[n++]));
+    this->prob_change         = std::stod(parseLine(input_lines[n++]));
+    this->max_time            = std::stoi(parseLine(input_lines[n++]));
+    this->step_size           = std::stod(parseLine(input_lines[n++]));
 
     // Close the input file
     input_file.close();

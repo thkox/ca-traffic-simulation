@@ -18,7 +18,6 @@ private:
 public:
     Road(Inputs inputs);
     ~Road();
-    int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
     std::vector<Lane*> getLanes();
     int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
 

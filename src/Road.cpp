@@ -31,16 +31,6 @@ Road::~Road() {
     }
 }
 
-int Road::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr) {
-    // Initialize each each Lane in the Road with cars with given percentage
-    for (int i = 0; i < (int) this->lanes.size(); i++) {
-        this->lanes[i]->initializeCars(inputs, vehicles, next_id_ptr);
-    }
-
-    // Return with no errors
-    return 0;
-}
-
 std::vector<Lane*> Road::getLanes() {
     return this->lanes;
 }
