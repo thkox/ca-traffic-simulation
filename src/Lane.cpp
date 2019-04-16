@@ -24,6 +24,8 @@ Lane::Lane(Inputs inputs, int lane_num) {
 #ifdef DEBUG
     std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
 #endif
+
+    this->steps_to_spawn = 0;
 }
 
 int Lane::initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr) {
@@ -69,6 +71,29 @@ int Lane::removeVehicle(int site) {
     this->sites[site].pop_front();
 
     // Return with zero errors
+    return 0;
+}
+
+int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr, CDF* interarrival_time_cdf) {
+    if (this->steps_to_spawn == 0) {
+        if (!this->hasVehicleInSite(0)) {
+            // Spawn Vehicle
+#ifdef DEBUG
+            std::cout << "creating vehicle " << (*next_id_ptr) << " in lane " << this->lane_num << " at site " << 0
+                      << std::endl;
+#endif
+            this->sites[0].push_front(new Vehicle(this, *next_id_ptr, 0, inputs));
+            (*next_id_ptr)++;
+            vehicles->push_back(this->sites[0].front());
+
+            // "Schedule" next Vehicle spawn
+            this->steps_to_spawn = (int) (interarrival_time_cdf->query() / inputs.step_size);
+        }
+    } else {
+        this->steps_to_spawn--;
+    }
+
+    // Return with no error
     return 0;
 }
 

@@ -20,6 +20,7 @@ public:
     ~Road();
     int initializeCars(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
     std::vector<Lane*> getLanes();
+    int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
 
 #ifdef DEBUG
     void printRoad();

@@ -122,15 +122,21 @@ int Simulation::run_simulation(int num_threads) {
 
             #pragma omp barrier
 
-            // Increment the simulation time and remove finished vehicles
+            // End of iteration steps
             if (omp_get_thread_num() == 0) {
+                // Increment time
                 this->time++;
+
+                // Remove finished vehicles
                 std::sort(vehicles_to_remove.begin(), vehicles_to_remove.end());
                 for (int i = vehicles_to_remove.size() - 1; i >= 0; i--) {
                     delete this->vehicles[vehicles_to_remove[i]];
                     this->vehicles.erase(this->vehicles.begin() + vehicles_to_remove[i]);
                 }
                 vehicles_to_remove.clear();
+
+                // Spawn new Vehicles
+                this->road_ptr->attemptSpawn(this->inputs, &(this->vehicles), &(this->next_id));
             }
 
             #pragma omp barrier

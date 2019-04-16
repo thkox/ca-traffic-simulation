@@ -14,6 +14,7 @@ private:
     std::vector<float> cdf;
 public:
     int read_cdf(std::string file_name);
+    double query();
 };
 
 

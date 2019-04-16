@@ -32,3 +32,13 @@ int CDF::read_cdf(std::string file_name) {
     // Return with no errors
     return 0;
 }
+
+double CDF::query() {
+    double u = ((double) std::rand()) / ((double) RAND_MAX);
+    for (int i = 0; i < (int) this->cdf.size(); i++) {
+        if (this->cdf[i] >= u) {
+            return this->x[i];
+        }
+    }
+    return this->cdf.back();
+}

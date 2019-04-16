@@ -45,6 +45,15 @@ std::vector<Lane*> Road::getLanes() {
     return this->lanes;
 }
 
+int Road::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr) {
+    for (int i = 0; i < (int) this->lanes.size(); i++) {
+        this->lanes[i]->attemptSpawn(inputs, vehicles, next_id_ptr, this->interarrival_time_cdf);
+    }
+
+    // Return with no errors
+    return 0;
+}
+
 #ifdef DEBUG
 void Road::printRoad() {
     for (int i = this->lanes.size() - 1; i >= 0; i--) {
