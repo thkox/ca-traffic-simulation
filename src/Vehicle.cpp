@@ -47,9 +47,9 @@ Vehicle::~Vehicle() {}
 int Vehicle::updateGaps(Road* road_ptr) {
     // Locate the preceding Vehicle and update the forward gap
     this->gap_forward = this->lane_ptr->getSize() - 1;
-    for (int i = 1; i < this->lane_ptr->getSize(); i++) {
-        if (this->lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
-            this->gap_forward = i - 1;
+    for (int i = this->position + 1; i < this->lane_ptr->getSize(); i++) {
+        if (this->lane_ptr->hasVehicleInSite(i)) {
+            this->gap_forward = i - this->position - 1;
             break;
         }
     }
@@ -66,22 +66,21 @@ int Vehicle::updateGaps(Road* road_ptr) {
         other_lane_ptr = road_ptr->getLanes()[0];
     }
 
-    // TODO: Rewrite forward search to be more efficient
     // Update the forward gap in the other lane
     this->gap_other_forward = this->lane_ptr->getSize() - 1;
-    for (int i = 0; i < this->lane_ptr->getSize(); i++) {
-        if (other_lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
-            this->gap_other_forward = i - 1;
+    for (int i = this->position; i < this->lane_ptr->getSize(); i++) {
+        if (other_lane_ptr->hasVehicleInSite(i)) {
+            this->gap_other_forward = i - this->position - 1;
             break;
         }
     }
 
-    // TODO: Rewrite backward search to be more efficient
     // Update the backward gap in the other lane
     this->gap_other_backward = this->lane_ptr->getSize() - 1;
-    for (int i = 0; i < this->lane_ptr->getSize() + 1; i++) {
-        if (other_lane_ptr->hasVehicleInSite((this->position+i) % this->lane_ptr->getSize())) {
-            this->gap_other_backward = this->lane_ptr->getSize() - i - 1;
+    for (int i = this->position; i >= 0; i--) {
+        if (other_lane_ptr->hasVehicleInSite(i)) {
+            this->gap_other_backward = this->position - i - 1;
+            break;
         }
     }
 
