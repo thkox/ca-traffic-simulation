@@ -36,6 +36,7 @@ public:
     int performLaneSwitch(Road* road_ptr);
     int performLaneMove();
     int getId();
+    double getTravelTime(Inputs inputs);
 
 #ifdef DEBUG
     void printGaps();

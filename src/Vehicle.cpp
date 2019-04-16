@@ -23,8 +23,8 @@ Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
     // Set the maximum speed of the Vehicle
     this->max_speed = inputs.max_speed;
 
-    // Set the initial speed of the Vehicle to zero
-    this->speed = 0;
+    // Set the initial speed of the Vehicle to the maximum speed
+    this->speed = this->max_speed;
 
     // Set the look forward distance of the Vehicle
     this->look_forward = this->speed + 1;
@@ -192,6 +192,10 @@ int Vehicle::performLaneMove() {
 
 int Vehicle::getId() {
     return this->id;
+}
+
+double Vehicle::getTravelTime(Inputs inputs) {
+    return inputs.step_size * this->time_on_road;
 }
 
 #ifdef DEBUG

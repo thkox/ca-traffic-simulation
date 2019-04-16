@@ -4,6 +4,7 @@
 
 #include <omp.h>
 #include <algorithm>
+#include <cmath>
 #include "Road.h"
 #include "Simulation.h"
 #include "Vehicle.h"
@@ -17,6 +18,9 @@ Simulation::Simulation(Inputs inputs) {
 
     // Obtain the simulation inputs
     this->inputs = inputs;
+
+    // Initialize Statistic for travel time
+    this->travel_time = new Statistic();
 }
 
 Simulation::~Simulation() {
@@ -127,6 +131,10 @@ int Simulation::run_simulation(int num_threads) {
                 // Remove finished vehicles
                 std::sort(vehicles_to_remove.begin(), vehicles_to_remove.end());
                 for (int i = vehicles_to_remove.size() - 1; i >= 0; i--) {
+                    // Update travel time statistic
+                    this->travel_time->addValue(this->vehicles[vehicles_to_remove[i]]->getTravelTime(this->inputs));
+
+                    // Delete the Vehicle
                     delete this->vehicles[vehicles_to_remove[i]];
                     this->vehicles.erase(this->vehicles.begin() + vehicles_to_remove[i]);
                 }
@@ -156,6 +164,8 @@ int Simulation::run_simulation(int num_threads) {
 
     // Print the average Vehicle time on the Road
     std::cout << "--- Simulation Results ---" << std::endl;
+    std::cout << "time on road: avg=" << this->travel_time->getAverage() << ", std="
+              << pow(this->travel_time->getVariance(), 0.5) << std::endl;
 
     // Return with no errors
     return 0;

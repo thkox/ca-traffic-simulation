@@ -9,6 +9,7 @@
 
 #include "Road.h"
 #include "Inputs.h"
+#include "Statistic.h"
 
 class Simulation {
 private:
@@ -17,6 +18,7 @@ private:
     std::vector<Vehicle*> vehicles;
     Inputs inputs;
     int next_id;
+    Statistic* travel_time;
 public:
     Simulation(Inputs inputs);
     ~Simulation();
