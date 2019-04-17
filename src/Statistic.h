@@ -16,6 +16,7 @@ public:
     void addValue(double value);
     double getAverage();
     double getVariance();
+    int getNumSamples();
 };
 
 

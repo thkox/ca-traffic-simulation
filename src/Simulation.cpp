@@ -165,7 +165,8 @@ int Simulation::run_simulation(int num_threads) {
     // Print the average Vehicle time on the Road
     std::cout << "--- Simulation Results ---" << std::endl;
     std::cout << "time on road: avg=" << this->travel_time->getAverage() << ", std="
-              << pow(this->travel_time->getVariance(), 0.5) << std::endl;
+              << pow(this->travel_time->getVariance(), 0.5) << ", N=" << this->travel_time->getNumSamples()
+              << std::endl;
 
     // Return with no errors
     return 0;

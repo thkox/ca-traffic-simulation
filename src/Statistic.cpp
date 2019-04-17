@@ -42,3 +42,7 @@ double Statistic::getVariance() {
     // Divide the sum by the number of points minus 1 and return the variance
     return sum / ((double) this->values.size() - 1.0);
 }
+
+int Statistic::getNumSamples() {
+    return this->values.size();
+}
