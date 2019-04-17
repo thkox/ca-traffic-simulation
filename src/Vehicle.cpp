@@ -198,6 +198,13 @@ double Vehicle::getTravelTime(Inputs inputs) {
     return inputs.step_size * this->time_on_road;
 }
 
+int Vehicle::setSpeed(int speed) {
+    this->speed = speed;
+
+    // Return with no errors
+    return 0;
+}
+
 #ifdef DEBUG
 void Vehicle::printGaps() {
     std::cout << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"

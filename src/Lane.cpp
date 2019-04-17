@@ -68,6 +68,11 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
             (*next_id_ptr)++;
             vehicles->push_back(this->sites[0].front());
 
+            // Randomly choose the Vehicles initial speed to be zero bases in slow down probability
+            if (((double) std::rand()) / ((double) RAND_MAX) < inputs.prob_slow_down) {
+                vehicles->back()->setSpeed(0);
+            }
+
             // "Schedule" next Vehicle spawn
             this->steps_to_spawn = (int) (interarrival_time_cdf->query() / inputs.step_size);
         }

@@ -37,6 +37,7 @@ public:
     int performLaneMove();
     int getId();
     double getTravelTime(Inputs inputs);
+    int setSpeed(int speed);
 
 #ifdef DEBUG
     void printGaps();
