@@ -20,7 +20,7 @@ Road::Road(Inputs inputs) {
     this->interarrival_time_cdf = new CDF();
     int status = this->interarrival_time_cdf->read_cdf("interarrival-cdf.dat");
     if (status != 0) {
-        throw 1;
+        throw std::exception();
     }
 }
 
