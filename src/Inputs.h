@@ -20,6 +20,7 @@ public:
     double prob_change;
     int max_time;
     double step_size;
+    int warmup_time;
     int loadFromFile();
 };
 

@@ -44,6 +44,7 @@ int Inputs::loadFromFile() {
     this->prob_change         = std::stod(parseLine(input_lines[n++]));
     this->max_time            = std::stoi(parseLine(input_lines[n++]));
     this->step_size           = std::stod(parseLine(input_lines[n++]));
+    this->warmup_time         = std::stoi(parseLine(input_lines[n++]));
 
     // Close the input file
     input_file.close();

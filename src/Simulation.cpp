@@ -131,8 +131,10 @@ int Simulation::run_simulation(int num_threads) {
                 // Remove finished vehicles
                 std::sort(vehicles_to_remove.begin(), vehicles_to_remove.end());
                 for (int i = vehicles_to_remove.size() - 1; i >= 0; i--) {
-                    // Update travel time statistic
-                    this->travel_time->addValue(this->vehicles[vehicles_to_remove[i]]->getTravelTime(this->inputs));
+                    // Update travel time statistic if beyond warm-up period
+                    if (this->time > this->inputs.warmup_time) {
+                        this->travel_time->addValue(this->vehicles[vehicles_to_remove[i]]->getTravelTime(this->inputs));
+                    }
 
                     // Delete the Vehicle
                     delete this->vehicles[vehicles_to_remove[i]];
