@@ -5,7 +5,7 @@ import scipy.stats
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-ntrials = 1
+ntrials = 10
 
 def simulate(nthread):
     sp = subprocess.Popen(['./cats', str(nthread), '>', 'output.txt'],
@@ -23,14 +23,14 @@ def simulate(nthread):
 
 def write_input(ncells):
     with open('cats-input.txt', 'w') as input_file:
-        input_file.write('2\n%d\n1\n6\n6\n5\n0.588\n1.0\n100\n3.904\n1' % ncells)
+        input_file.write('2\n%d\n10\n6\n6\n5\n0.588\n1.0\n1000\n3.904\n1' % ncells)
 
 def main():
     subprocess.call(['cp', '../cmake-build-release/cats', '.'])
 
-    plt.figure(figsize=(6,6))
-    nthreads = [1,2,3,4]
-    ncells_dict = {1000:'-rD', 10000:'-g^', 100000:'-bo'}
+    plt.figure(figsize=(5,5))
+    nthreads = [1,2,4,8]
+    ncells_dict = {10000:'-g^', 100000:'-bo'}
     for ncells in ncells_dict.keys():
         comp_times = []
         write_input(ncells)
