@@ -39,7 +39,7 @@ The software requres CMake 3.9 or higher to build the program.
                                 2. INSTALLATION
 -------------------------------------------------------------------------------
 
-To build the vortex simulation program, run the following commands
+To build the simulation program, run the following commands
 
     $ mkdir build; cd build
     $ cmake ../.
@@ -47,7 +47,7 @@ To build the vortex simulation program, run the following commands
 
 This will build the executable "cats".
 
-To build the vortex simulation program in debug mode, run the following
+To build the simulation program in debug mode, run the following
 commands
 
     $ mkdir build; cd build
@@ -69,9 +69,20 @@ following modifications to the program:
 -------------------------------------------------------------------------------
 
 To run the simulation program, copy the executable file "cats" into a directory
-where you want to run the simulation. A configuration file "cate-input.txt"
+where you want to run the simulation. A configuration file 
+
+    "cats-input.txt"
+
 needs to be placed alongside the executable. A sample configuration file is
-included in the root directory of the repository.
+included in the root directory of the repository. Also required by the program
+is a file with the CDF of interarrival times. This file is formatted as a
+text file called 
+
+    "interarrival-cdf.dat" 
+    
+and has two columns of numbers: the interarrival times in ascending order and
+the cumulative probability for those interarrival times. To run the program, 
+execute the command
 
     $ ./cats <nthread>
 
