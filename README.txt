@@ -81,8 +81,9 @@ text file called
     "interarrival-cdf.dat" 
     
 and has two columns of numbers: the interarrival times in ascending order and
-the cumulative probability for those interarrival times. To run the program, 
-execute the command
+the cumulative probability for those interarrival times. A sample CDF file is
+included in the root directory of the repositoryTo run the program, execute 
+the command
 
     $ ./cats <nthread>
 
