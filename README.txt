@@ -32,6 +32,11 @@ through a two lane road. The software uses OpenMP for parallelization of the
 simulation, and has a release mode for maximum performance, and a debug mode
 for debugging the software.
 
+The CA algorithm implemented in this code is described in "Two lane traffic 
+simulations using cellular automata" by M. Rickert, et al.
+
+https://doi.org/10.1016/0378-4371(95)00442-4
+
 The software requires a GNU C++ compiler supporting C++17 with OpenMP enabled.
 The software requres CMake 3.9 or higher to build the program.
 
