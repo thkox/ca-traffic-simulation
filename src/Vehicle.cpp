@@ -10,6 +10,13 @@
 #include "Lane.h"
 #include "Road.h"
 
+/**
+ * Constructor for the Vehicle
+ * @param lane_ptr pointer to the Lane in which the Vehicle starts in
+ * @param id unique ID number of the Vehicle
+ * @param initial_position initial site number of the Vehicle in the Lane
+ * @param inputs instance of the Inputs class with the simulation inputs
+ */
 Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
     // Set the ID number of the Vehicle
     this->id = id;
@@ -47,6 +54,12 @@ Vehicle::Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs) {
 
 Vehicle::~Vehicle() {}
 
+/**
+ * Update the perceived gaps between the Vehicle and the surrounding Vehicles in the Road
+ * @param road_ptr pointer to the Road that the Vehicle is in
+ * @return 0 if successful, nonzero otherwise
+
+ */
 int Vehicle::updateGaps(Road* road_ptr) {
     // Locate the preceding Vehicle and update the forward gap
     this->gap_forward = this->lane_ptr->getSize() - 1;
@@ -91,6 +104,11 @@ int Vehicle::updateGaps(Road* road_ptr) {
     return 0;
 }
 
+/**
+ * Moved the Vehicle to the other Lane in the Road
+ * @param road_ptr pointer to the Road in which the Vehicle is on
+ * @return 0 if successful, nonzero otherwise
+ */
 int Vehicle::performLaneSwitch(Road* road_ptr) {
     // Evaluate if the Vehicle will change lanes and then perform the lane change
     if (this->gap_forward < this->look_forward &&
@@ -125,6 +143,10 @@ int Vehicle::performLaneSwitch(Road* road_ptr) {
     return 0;
 }
 
+/**
+ * Moves the Vehicle to the next site in the current Lane during the time-step based on the speed of the Vehicle
+ * @return 0 if successful, nonzero otherwise
+ */
 int Vehicle::performLaneMove() {
     // Increment the time on road counter
     this->time_on_road++;
@@ -190,21 +212,37 @@ int Vehicle::performLaneMove() {
     return 0;
 }
 
+/**
+ * Getter method for the ID number of the Vehicle
+ * @return
+ */
 int Vehicle::getId() {
     return this->id;
 }
 
+/**
+ * Getter method for the total time the Vehicle has spent on the Road
+ * @param inputs
+ * @return
+ */
 double Vehicle::getTravelTime(Inputs inputs) {
     return inputs.step_size * this->time_on_road;
 }
 
+/**
+ * Setter method for the speed of the Vehicle
+ * @param speed
+ * @return
+ */
 int Vehicle::setSpeed(int speed) {
     this->speed = speed;
 
     // Return with no errors
     return 0;
 }
-
+/**
+ * Debug method for printing the gap information of the Vehicle
+ */
 #ifdef DEBUG
 void Vehicle::printGaps() {
     std::cout << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"

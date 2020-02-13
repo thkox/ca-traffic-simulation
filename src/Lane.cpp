@@ -11,6 +11,11 @@
 #include "Vehicle.h"
 #include "Inputs.h"
 
+/**
+ * Constructor for the Lane class
+ * @param inputs instance of the Inputs class with simulation inputs
+ * @param lane_num the number of lane in the road, starting with zero as the first lane
+ */
 Lane::Lane(Inputs inputs, int lane_num) {
 #ifdef DEBUG
     std::cout << "creating lane " << lane_num << "...";
@@ -28,18 +33,37 @@ Lane::Lane(Inputs inputs, int lane_num) {
     this->steps_to_spawn = 0;
 }
 
+/**
+ * Getter method for the number of sites in the Lane
+ * @return number of sites in the Lane
+ */
 int Lane::getSize() {
     return this->sites.size();
 }
 
+/**
+ * Getter method for the Lane's number
+ * @return the number of the Lane
+ */
 int Lane::getLaneNumber() {
     return this->lane_num;
 }
 
+/**
+ * Checks if the Lane has a Vehicle in a specific site
+ * @param site the site in which to check for a Vehicle
+ * @return whether or not the Lane has a Vehicle in the site
+ */
 bool Lane::hasVehicleInSite(int site) {
     return !(this->sites[site].empty());
 }
 
+/**
+ * Adds a Vehicle to a site in the Lane
+ * @param site which site to add the Vehicle to
+ * @param vehicle_ptr pointer to the Vehicle to add to the site
+ * @return 0 if successful, nonzero otherwise
+ */
 int Lane::addVehicle(int site, Vehicle* vehicle_ptr) {
     // Place the Vehicle in the site
     this->sites[site].push_back(vehicle_ptr);
@@ -48,6 +72,11 @@ int Lane::addVehicle(int site, Vehicle* vehicle_ptr) {
     return 0;
 }
 
+/**
+ * Removes a Vehicle from a site in the Lane
+ * @param site which site to remove the Vehicle from
+ * @return 0 if successful, nonzero otherwise
+ */
 int Lane::removeVehicle(int site) {
     // Remove the Vehicle from the site
     this->sites[site].pop_front();
@@ -56,6 +85,15 @@ int Lane::removeVehicle(int site) {
     return 0;
 }
 
+/**
+ * Attempts to spawn a Vehicle that has entered the Lane at the first site. Uses a CDF to sample to determine whether
+ * or not a Vehicle was spawned.
+ * @param inputs instance of the Inputs class with the simulation inputs
+ * @param vehicles pointer to list of Vehicles to add the spawned Vehicles to
+ * @param next_id_ptr pointer to the id number of the next spawned Vehicle
+ * @param interarrival_time_cdf CDF of the Vehicle interarrival times
+ * @return
+ */
 int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr, CDF* interarrival_time_cdf) {
     if (this->steps_to_spawn == 0) {
         if (!this->hasVehicleInSite(0)) {
@@ -84,6 +122,9 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
     return 0;
 }
 
+/**
+ * Debug function to print the Lane to visualize the sites
+ */
 #ifdef DEBUG
 void Lane::printLane() {
     std::ostringstream lane_string_stream;

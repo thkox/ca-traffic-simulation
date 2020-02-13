@@ -8,6 +8,12 @@
 #include <string>
 #include <iostream>
 
+/**
+ * Reads the data for the cumulative distribution function from a two column comma delimited text file where the first
+ * column is the values and the second column is the distribution function at that value.
+ * @param file_name path and name of the file to read
+ * @return 0 if successful, nonzero otherwise
+ */
 int CDF::read_cdf(std::string file_name) {
     // Open the file containing the CDF information
     std::ifstream file(file_name);
@@ -33,6 +39,10 @@ int CDF::read_cdf(std::string file_name) {
     return 0;
 }
 
+/**
+ * Sampled a point from the cumulative distribution function
+ * @return sampled point from the distribution
+ */
 double CDF::query() {
     double u = ((double) std::rand()) / ((double) RAND_MAX);
     for (int i = 0; i < (int) this->cdf.size(); i++) {

@@ -14,6 +14,10 @@
 // Forward Declarations
 class Vehicle;
 
+/**
+ * Class for a lane in the road of the simulation. Each lane contains the "sites" for the vehicles and allows access
+ * to all the information about the vehicles on the road through its methods.
+ */
 class Lane {
 private:
     std::vector<std::deque<Vehicle*>> sites;

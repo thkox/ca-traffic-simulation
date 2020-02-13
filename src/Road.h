@@ -11,6 +11,10 @@
 #include "Inputs.h"
 #include "CDF.h"
 
+/**
+ * Class for the Road in the Simulation. The road has multiple Lanes that each contain Vehicles. Has methods to attempt
+ * spawning Vehicles in the Lanes
+ */
 class Road {
 private:
     std::vector<Lane*> lanes;

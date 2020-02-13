@@ -11,6 +11,10 @@
 #include "Inputs.h"
 #include "Statistic.h"
 
+/**
+ * Class for the simulation. Has a method for running the simulation in parallel using OpenMP with a specified number
+ * of threads.
+ */
 class Simulation {
 private:
     Road* road_ptr;

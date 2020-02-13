@@ -7,6 +7,12 @@
 #include "Inputs.h"
 #include "Simulation.h"
 
+/**
+ * Main point of execution of the program
+ * @param argc number of command line arguments
+ * @param argv command line arguments
+ * @return 0 if successful, nonzero otherwise
+ */
 int main(int argc, char** argv) {
     std::cout << "================================================" << std::endl;
     std::cout << "||    CELLULAR AUTOMATA TRAFFIC SIMULATION    ||" << std::endl;

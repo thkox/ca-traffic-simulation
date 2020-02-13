@@ -9,6 +9,10 @@
 #include "Simulation.h"
 #include "Vehicle.h"
 
+/**
+ * Constructor for the Simulation
+ * @param inputs
+ */
 Simulation::Simulation(Inputs inputs) {
     // Create the Road object for the simulation
     this->road_ptr = new Road(inputs);
@@ -23,6 +27,9 @@ Simulation::Simulation(Inputs inputs) {
     this->travel_time = new Statistic();
 }
 
+/**
+ * Destructor for the Simulation
+ */
 Simulation::~Simulation() {
     // Delete the Road object in the simulation
     delete this->road_ptr;
@@ -33,6 +40,11 @@ Simulation::~Simulation() {
     }
 }
 
+/**
+ * Executes the simulation in parallel using the specified number of threads
+ * @param num_threads number of threads to run the simulation with
+ * @return 0 if successful, nonzero otherwise
+ */
 int Simulation::run_simulation(int num_threads) {
     // Obtain the start time
     double start_time = omp_get_wtime();

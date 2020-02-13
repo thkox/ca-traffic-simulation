@@ -8,6 +8,9 @@
 #include <vector>
 #include <string>
 
+/**
+ * Class for a Cumulative Distribution Function that has a method for sampling a point from the distribution.
+ */
 class CDF {
 private:
     std::vector<float> x;

@@ -9,10 +9,19 @@
 
 #include "Inputs.h"
 
+/**
+ * Helper function to parse a line in the input file and return the parameter value of the line
+ * @param line a string which is a line from the input file
+ * @return the parameter on the line
+ */
 std::string parseLine(std::string line) {
     return line.substr(0, line.find(' '));
 }
 
+/**
+ * Loads the inputs options from a text file into the class variables
+ * @return 0 if successful, nonzero otherwise
+ */
 int Inputs::loadFromFile() {
     // Open the input file for reading the simulation inputs
     std::fstream input_file;

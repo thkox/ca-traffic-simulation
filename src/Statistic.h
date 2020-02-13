@@ -7,6 +7,10 @@
 
 #include <vector>
 
+/**
+ * Class for the statistics of a property of the simulation, like Vehicle travel time on the road. Has methods for
+ * adding samples to the statistic, or getting mean and variance
+ */
 class Statistic {
 private:
     std::vector<double> values;

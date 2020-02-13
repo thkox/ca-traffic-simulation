@@ -12,6 +12,10 @@
 // Forward declarations
 class Lane;
 
+/**
+ * Constructor for a Vehicle in the simulation. Has methods for performing movements based on the CA rules of the
+ * simulation.
+ */
 class Vehicle {
 private:
     Lane* lane_ptr;

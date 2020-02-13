@@ -7,6 +7,10 @@
 
 #include <iostream>
 
+/**
+ * Class for the input options of a simulation that acts as a structure to organize the inputs in one place.
+ * Has methods to load all the inputs from a file from an input text file.
+ */
 class Inputs {
 public:
     int num_lanes;
