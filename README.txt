@@ -28,16 +28,15 @@ Contents:
 -------------------------------------------------------------------------------
 
 This software uses cellular automata to simulate the movement of vehicles
-through a two lane road. The software uses OpenMP for parallelization of the
-simulation, and has a release mode for maximum performance, and a debug mode
-for debugging the software.
+through a two lane road. The software has a release mode for maximum
+performance, and a debug mode for debugging the software.
 
 The CA algorithm implemented in this code is described in "Two lane traffic 
 simulations using cellular automata" by M. Rickert, et al.
 
 https://doi.org/10.1016/0378-4371(95)00442-4
 
-The software requires a GNU C++ compiler supporting C++17 with OpenMP enabled.
+The software requires a GNU C++ compiler supporting C++17.
 The software requres CMake 3.9 or higher to build the program.
 
 -------------------------------------------------------------------------------
@@ -47,7 +46,7 @@ The software requres CMake 3.9 or higher to build the program.
 To build the simulation program, run the following commands
 
     $ mkdir build; cd build
-    $ cmake ../.
+    $ cmake ..
     $ make
 
 This will build the executable "cats".
@@ -56,7 +55,7 @@ To build the simulation program in debug mode, run the following
 commands
 
     $ mkdir build; cd build
-    $ cmake ../. -DCMAKE_BUILD_TYPE=Debug
+    $ cmake -DCMAKE_BUILD_TYPE=Debug ..
     $ make
 
 This will build the executable "cats" in debug mode. The debug mode makes the
@@ -64,8 +63,7 @@ following modifications to the program:
 
     1. The random number generator is seeded with a constant, so that the
         the results are reproducible.
-    2. The number of threads is locked to 1
-    3. Print statements are included in many parts of the code to assist in the
+    2. Print statements are included in many parts of the code to assist in the
         debugging process. These include simple visualizations of the road at
         each step in the simulation.
 
@@ -87,11 +85,8 @@ text file called
     
 and has two columns of numbers: the interarrival times in ascending order and
 the cumulative probability for those interarrival times. A sample CDF file is
-included in the root directory of the repositoryTo run the program, execute 
+included in the root directory of the repository. To run the program, execute 
 the command
 
-    $ ./cats <nthread>
+    $ ./cats
 
-where:
-    
-    <nthread> - the number of threads that you want to run the program with.
