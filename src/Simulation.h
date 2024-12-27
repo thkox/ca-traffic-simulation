@@ -25,7 +25,7 @@ private:
 public:
     Simulation(Inputs inputs);
     ~Simulation();
-    int run_simulation();
+    int run_simulation(int rank, int size);
 };
 
 

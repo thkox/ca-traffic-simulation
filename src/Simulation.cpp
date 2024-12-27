@@ -45,7 +45,7 @@ Simulation::~Simulation() {
  * @param num_threads number of threads to run the simulation with
  * @return 0 if successful, nonzero otherwise
  */
-int Simulation::run_simulation() {
+int Simulation::run_simulation(int rank, int size) {
     // Obtain the start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
