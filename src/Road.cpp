@@ -11,13 +11,14 @@
  * Constructor for the Road
  * @param inputs instance of the Inputs class with simulation inputs
  */
-Road::Road(Inputs inputs) {
+Road::Road(Inputs inputs, int start_site, int end_site, int rank, std::ofstream &log_file) {
 #ifdef DEBUG
     std::cout << "creating new road with " << inputs.num_lanes << " lanes..." << std::endl;
+    log_file << "Rank " << rank << ": " << "Creating new road with " << inputs.num_lanes << " lanes..." << std::endl;
 #endif
     // Create the Lane objects for the Road
     for (int i = 0; i < inputs.num_lanes; i++) {
-        this->lanes.push_back(new Lane(inputs, i));
+        this->lanes.push_back(new Lane(inputs, i, start_site, end_site, rank, log_file));
     }
 #ifdef DEBUG
     std::cout << "done creating road" << std::endl;

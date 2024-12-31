@@ -24,7 +24,7 @@ private:
     int lane_num;
     int steps_to_spawn;
 public:
-    Lane(Inputs inputs, int lane_num);
+    Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file);
     int getSize();
     int getLaneNumber();
     bool hasVehicleInSite(int site);

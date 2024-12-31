@@ -23,7 +23,7 @@ private:
     int next_id;
     Statistic* travel_time;
 public:
-    Simulation(Inputs inputs);
+    Simulation(Inputs inputs, int rank, int size, std::ofstream &log_file);
     ~Simulation();
     int run_simulation(int rank, int size, std::ofstream &log_file);
 };

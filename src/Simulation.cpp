@@ -17,9 +17,15 @@
  * Constructor for the Simulation
  * @param inputs
  */
-Simulation::Simulation(Inputs inputs) {
+Simulation::Simulation(Inputs inputs, int rank, int size, std::ofstream &log_file) {
+
+    // Calculate the section of the road for this process
+    const int length_per_process = inputs.length / size;
+    int start_site = rank * length_per_process;
+    int end_site = (rank + 1) * length_per_process;
+
     // Create the Road object for the simulation
-    this->road_ptr = new Road(inputs);
+    this->road_ptr = new Road(inputs, start_site, end_site, rank, log_file);
 
     // Initialize the first Vehicle id
     this->next_id = 0;
@@ -51,25 +57,23 @@ Simulation::~Simulation() {
  */
 int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
-    const int length_per_process = inputs.length/size;
-    int start_site = rank * length_per_process + 1;
-    int end_site = (rank+1) * length_per_process;
+//     const int length_per_process = inputs.length / size;
+//     int start_site = rank * length_per_process;
+//     int end_site = (rank + 1) * length_per_process;
+//
+// #ifdef DEBUG
+//     std::cout << "start_site: " << start_site << ", end_site: " << end_site << std::endl;
+//     log_file << "Rank " << rank << ": Simulation running on rank " << rank << " of " << size << std::endl;
+// #endif
+//
+    // Obtain the start time
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-#ifdef DEBUG
-    std::cout << "start_site: " << start_site << ", end_site: " << end_site << std::endl;
-    log_file << "Rank " << rank << ": Simulation running on rank " << rank << " of " << size << std::endl;
-#endif
+    // Set the simulation time to zero
+    this->time = 0;
 
-    // if ( rank == 0 ) {
-        // Obtain the start time
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-        // Set the simulation time to zero
-        this->time = 0;
-
-        // Declare a vector for vehicles to be removed each step
-        std::vector<int> vehicles_to_remove;
-    // }
+    // Declare a vector for vehicles to be removed each step
+    std::vector<int> vehicles_to_remove;
 
     while (this->time < this->inputs.max_time) {
 
@@ -158,6 +162,8 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 #ifdef DEBUG
     // Print final road configuration
     std::cout << "final road configuration" << std::endl;
+    log_file << "Rank " << rank << ": " << "Final road configuration" << std::endl;
+
     this->road_ptr->printRoad(rank, log_file);
 #endif
 

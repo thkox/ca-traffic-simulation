@@ -17,18 +17,19 @@
  * @param inputs instance of the Inputs class with simulation inputs
  * @param lane_num the number of lane in the road, starting with zero as the first lane
  */
-Lane::Lane(Inputs inputs, int lane_num) {
+Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file) {
 #ifdef DEBUG
     std::cout << "creating lane " << lane_num << "...";
 #endif
     // Allocate memory for the vehicle pointers list
-    this->sites.reserve(inputs.length);
-    this->sites.resize(inputs.length);
+    this->sites.reserve(end_site - start_site);
+    this->sites.resize(end_site - start_site);
 
     // Set the lane number for the lane
     this->lane_num = lane_num;
 #ifdef DEBUG
     std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
+    log_file << "Rank " << rank << ": " << "Lane " << lane_num << " created with length " << this->sites.size() << std::endl;
 #endif
 
     this->steps_to_spawn = 0;

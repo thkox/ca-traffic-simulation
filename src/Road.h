@@ -20,7 +20,7 @@ private:
     std::vector<Lane*> lanes;
     CDF* interarrival_time_cdf;
 public:
-    Road(Inputs inputs);
+    Road(Inputs inputs, int start_site, int end_site, int rank, std::ofstream &log_file);
     ~Road();
     std::vector<Lane*> getLanes();
     int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);

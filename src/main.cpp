@@ -17,14 +17,6 @@
  * @return 0 if successful, nonzero otherwise
  */
 int main(int argc, char** argv) {
-    std::cout << "================================================" << std::endl;
-    std::cout << "||    CELLULAR AUTOMATA TRAFFIC SIMULATION    ||" << std::endl;
-    std::cout << "================================================" << std::endl;
-
-#ifndef DEBUG
-    srand(time(NULL));
-#endif
-
 
     // Initialize MPI
     int rank, size;
@@ -38,6 +30,21 @@ int main(int argc, char** argv) {
         MPI_Finalize();
         return 1;
     }
+
+    if ( rank == 0 ) {
+        std::cout << "================================================" << std::endl;
+        std::cout << "||    CELLULAR AUTOMATA TRAFFIC SIMULATION    ||" << std::endl;
+        std::cout << "================================================" << std::endl;
+
+        log_file << "================================================" << std::endl;
+        log_file << "||    CELLULAR AUTOMATA TRAFFIC SIMULATION    ||" << std::endl;
+        log_file << "================================================" << std::endl;
+
+    }
+#ifndef DEBUG
+    srand(time(NULL));
+#endif
+
 
     log_file << "Rank " << rank << ": " << "I am rank " << rank << " of " << size << std::endl;
 
@@ -55,20 +62,13 @@ int main(int argc, char** argv) {
     MPI_Bcast(&inputs, sizeof(Inputs), MPI_BYTE, 0, MPI_COMM_WORLD);
 
     // Create a Simulation object for the current simulation only in the master process
-    Simulation* simulation_ptr = nullptr;
-    if (rank == 0) {
-        simulation_ptr = new Simulation(inputs);
-    }
+    Simulation* simulation_ptr = new Simulation(inputs, rank, size, log_file);
 
     // Run the Simulation
-    if (simulation_ptr != nullptr) {
-        simulation_ptr->run_simulation(rank, size, log_file);
-    }
+    simulation_ptr->run_simulation(rank, size, log_file);
 
     // Delete the Simulation object only in the master process
-    if (simulation_ptr != nullptr) {
-        delete simulation_ptr;
-    }
+    delete simulation_ptr;
 
     // MPI Finalize
     MPI_Finalize();
