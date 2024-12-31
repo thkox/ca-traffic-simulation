@@ -39,12 +39,6 @@ int main(int argc, char** argv) {
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
     MPI_Comm_size( MPI_COMM_WORLD, &size );
 
-    int i = 0;
-    while (!i)
-        sleep(5);
-
-    printf("I am rank %d of %d\n", rank, size);
-
     // Run the Simulation
     simulation_ptr->run_simulation(rank, size);
 

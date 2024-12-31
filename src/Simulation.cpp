@@ -7,6 +7,9 @@
 #include <cmath>
 #include "Road.h"
 #include "Simulation.h"
+
+#include <unistd.h>
+
 #include "Vehicle.h"
 
 /**
@@ -46,14 +49,27 @@ Simulation::~Simulation() {
  * @return 0 if successful, nonzero otherwise
  */
 int Simulation::run_simulation(int rank, int size) {
-    // Obtain the start time
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-    // Set the simulation time to zero
-    this->time = 0;
+    printf("I am rank %d of %d\n", rank, size);
 
-    // Declare a vector for vehicles to be removed each step
-    std::vector<int> vehicles_to_remove;
+    const int length_per_process = inputs.length/size;
+    int start_site = rank * length_per_process + 1;
+    int end_site = (rank+1) * length_per_process;
+
+#ifdef DEBUG
+    std::cout << "start_site: " << start_site << ", end_site: " << end_site << std::endl;
+#endif
+
+    // if ( rank == 0 ) {
+        // Obtain the start time
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+        // Set the simulation time to zero
+        this->time = 0;
+
+        // Declare a vector for vehicles to be removed each step
+        std::vector<int> vehicles_to_remove;
+    // }
 
     while (this->time < this->inputs.max_time) {
 
