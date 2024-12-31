@@ -44,7 +44,7 @@ public:
     int setSpeed(int speed);
 
 #ifdef DEBUG
-    void printGaps();
+    void printGaps(int rank, std::ofstream &log_file);
 #endif
 };
 

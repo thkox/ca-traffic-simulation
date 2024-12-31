@@ -26,7 +26,7 @@ public:
     int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr);
 
 #ifdef DEBUG
-    void printRoad();
+    void printRoad(int rank, std::ofstream &log_file);
 #endif
 };
 

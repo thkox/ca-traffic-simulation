@@ -4,7 +4,8 @@
 
 #include <cstdlib>
 #include <iomanip>
-
+#include <fstream>  // For std::ofstream
+#include <iostream> // For std::cout
 #include "Statistic.h"
 #include "Vehicle.h"
 #include "Lane.h"
@@ -244,8 +245,10 @@ int Vehicle::setSpeed(int speed) {
  * Debug method for printing the gap information of the Vehicle
  */
 #ifdef DEBUG
-void Vehicle::printGaps() {
+void Vehicle::printGaps(int rank, std::ofstream &log_file) {
     std::cout << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
+        << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
+    log_file << "Rank " << rank << ": " << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
         << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
 }
 #endif

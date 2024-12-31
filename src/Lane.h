@@ -32,7 +32,7 @@ public:
     int removeVehicle(int site);
     int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr, CDF* interarrival_time_cdf);
 #ifdef DEBUG
-    void printLane();
+    void printLane(int rank, std::ofstream &log_file);
 #endif
 };
 

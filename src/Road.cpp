@@ -4,6 +4,8 @@
 
 #include "Road.h"
 #include "Inputs.h"
+#include <fstream>  // For std::ofstream
+#include <iostream> // For std::cout
 
 /**
  * Constructor for the Road
@@ -66,9 +68,10 @@ int Road::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print all the Lanes of the Road for visualizing the sites in the Road
  */
 #ifdef DEBUG
-void Road::printRoad() {
+void Road::printRoad(int rank, std::ofstream &log_file) {
     for (int i = this->lanes.size() - 1; i >= 0; i--) {
-        this->lanes[i]->printLane();
+        this->lanes[i]->printLane(rank, log_file);
+
     }
 }
 #endif

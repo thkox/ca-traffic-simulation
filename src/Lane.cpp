@@ -6,7 +6,8 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
-
+#include <fstream>  // For std::ofstream
+#include <iostream> // For std::cout
 #include "Lane.h"
 #include "Vehicle.h"
 #include "Inputs.h"
@@ -126,7 +127,7 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print the Lane to visualize the sites
  */
 #ifdef DEBUG
-void Lane::printLane() {
+void Lane::printLane(int rank, std::ofstream &log_file) {
     std::ostringstream lane_string_stream;
     for (int i = 0; i < (int) this->sites.size(); i++) {
         if (this->sites[i].empty()) {
@@ -136,5 +137,6 @@ void Lane::printLane() {
         }
     }
     std::cout << lane_string_stream.str() << std::endl;
+    log_file << "Rank " << rank << ": " << lane_string_stream.str() << std::endl;
 }
 #endif

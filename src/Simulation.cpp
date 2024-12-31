@@ -7,7 +7,8 @@
 #include <cmath>
 #include "Road.h"
 #include "Simulation.h"
-
+#include <fstream>  // For std::ofstream
+#include <iostream> // For std::cout
 #include <unistd.h>
 
 #include "Vehicle.h"
@@ -48,9 +49,7 @@ Simulation::~Simulation() {
  * @param num_threads number of threads to run the simulation with
  * @return 0 if successful, nonzero otherwise
  */
-int Simulation::run_simulation(int rank, int size) {
-
-    printf("I am rank %d of %d\n", rank, size);
+int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
     const int length_per_process = inputs.length/size;
     int start_site = rank * length_per_process + 1;
@@ -58,6 +57,7 @@ int Simulation::run_simulation(int rank, int size) {
 
 #ifdef DEBUG
     std::cout << "start_site: " << start_site << ", end_site: " << end_site << std::endl;
+    log_file << "Rank " << rank << ": Simulation running on rank " << rank << " of " << size << std::endl;
 #endif
 
     // if ( rank == 0 ) {
@@ -75,15 +75,20 @@ int Simulation::run_simulation(int rank, int size) {
 
 #ifdef DEBUG
         std::cout << "road configuration at time " << time << ":" << std::endl;
-        this->road_ptr->printRoad();
+        this->road_ptr->printRoad(rank, log_file);
+
+        log_file << "Rank " << rank << ": " << "Road configuration at time " << time << ":" << std::endl;
+        this->road_ptr->printRoad(rank, log_file);
+
         std::cout << "performing lane switches..." << std::endl;
+        log_file << "Rank " << rank << ": " << "Performing lane switches..." << std::endl;
 #endif
 
         // Perform the lane switch step for all vehicles
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
             this->vehicles[n]->updateGaps(this->road_ptr);
 #ifdef DEBUG
-            this->vehicles[n]->printGaps();
+            this->vehicles[n]->printGaps(rank, log_file);
 #endif
         }
 
@@ -92,15 +97,18 @@ int Simulation::run_simulation(int rank, int size) {
         }
 
 #ifdef DEBUG
-        this->road_ptr->printRoad();
+
+        this->road_ptr->printRoad(rank, log_file);
         std::cout << "performing lane movements..." << std::endl;
+        log_file << "Rank " << rank << ": " << "Performing lane movements..." << std::endl;
+
 #endif
 
         // Perform the independent lane updates
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
             this->vehicles[n]->updateGaps(this->road_ptr);
 #ifdef DEBUG
-            this->vehicles[n]->printGaps();
+            this->vehicles[n]->printGaps(rank, log_file);
 #endif
         }
 
@@ -142,10 +150,15 @@ int Simulation::run_simulation(int rank, int size) {
     std::cout << "average time per iteration: " << time_elapsed / inputs.max_time << " [s]" << std::endl;
     std::cout << "average iterating frequency: " << inputs.max_time / time_elapsed << " [iter/s]" << std::endl;
 
+    log_file << "Rank " << rank << ": " << "--- Simulation Performance ---" << std::endl;
+    log_file << "Rank " << rank << ": " << "Total computation time: " << time_elapsed << " [s]" << std::endl;
+    log_file << "Rank " << rank << ": " << "Average time per iteration: " << time_elapsed / inputs.max_time << " [s]" << std::endl;
+    log_file << "Rank " << rank << ": " << "Average iterating frequency: " << inputs.max_time / time_elapsed << " [iter/s]" << std::endl;
+
 #ifdef DEBUG
     // Print final road configuration
     std::cout << "final road configuration" << std::endl;
-    this->road_ptr->printRoad();
+    this->road_ptr->printRoad(rank, log_file);
 #endif
 
     // Print the average Vehicle time on the Road
@@ -153,6 +166,11 @@ int Simulation::run_simulation(int rank, int size) {
     std::cout << "time on road: avg=" << this->travel_time->getAverage() << ", std="
               << pow(this->travel_time->getVariance(), 0.5) << ", N=" << this->travel_time->getNumSamples()
               << std::endl;
+
+    log_file << "Rank " << rank << ": " << "--- Simulation Results ---" << std::endl;
+    log_file << "Rank " << rank << ": " << "time on road: avg=" << this->travel_time->getAverage() << ", std="
+                                        << pow(this->travel_time->getVariance(), 0.5) << ", N=" << this->travel_time->getNumSamples()
+                                        << std::endl;
 
     // Return with no errors
     return 0;
