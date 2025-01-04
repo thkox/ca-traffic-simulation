@@ -21,8 +21,9 @@ Simulation::Simulation(Inputs inputs, int rank, int size, std::ofstream &log_fil
 
     // Calculate the section of the road for this process
     const int length_per_process = inputs.length / size;
-    int start_site = rank * length_per_process;
-    int end_site = (rank + 1) * length_per_process;
+
+    this->start_site =rank * length_per_process;
+    this->end_site = (rank + 1) * length_per_process;
 
     // Create the Road object for the simulation
     this->road_ptr = new Road(inputs, start_site, end_site, rank, log_file);
@@ -57,15 +58,6 @@ Simulation::~Simulation() {
  */
 int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
-//     const int length_per_process = inputs.length / size;
-//     int start_site = rank * length_per_process;
-//     int end_site = (rank + 1) * length_per_process;
-//
-// #ifdef DEBUG
-//     std::cout << "start_site: " << start_site << ", end_site: " << end_site << std::endl;
-//     log_file << "Rank " << rank << ": Simulation running on rank " << rank << " of " << size << std::endl;
-// #endif
-//
     // Obtain the start time
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -143,7 +135,8 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
         vehicles_to_remove.clear();
 
         // Spawn new Vehicles
-        this->road_ptr->attemptSpawn(this->inputs, &(this->vehicles), &(this->next_id));
+        if (rank == 0 )
+            this->road_ptr->attemptSpawn(this->inputs, &(this->vehicles), &(this->next_id));
     }
 
     // Print the total run time and average iterations per second and seconds per iteration
