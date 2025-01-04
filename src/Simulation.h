@@ -22,6 +22,8 @@ private:
     Inputs inputs;
     int next_id;
     Statistic* travel_time;
+    int start_site;
+    int end_site;
 public:
     Simulation(Inputs inputs, int rank, int size, std::ofstream &log_file);
     ~Simulation();
