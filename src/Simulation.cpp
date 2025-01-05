@@ -82,14 +82,14 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
         // Perform the lane switch step for all vehicles
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr);
+            this->vehicles[n]->updateGaps(this->road_ptr, rank, size);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
         }
 
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->performLaneSwitch(this->road_ptr, int rank, int size);
+            this->vehicles[n]->performLaneSwitch(this->road_ptr, rank, size);
         }
 
 #ifdef DEBUG
@@ -102,7 +102,7 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
         // Perform the independent lane updates
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr);
+            this->vehicles[n]->updateGaps(this->road_ptr, rank, size);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
