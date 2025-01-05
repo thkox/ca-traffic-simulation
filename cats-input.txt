@@ -1,5 +1,5 @@
 2       # number of lanes
-20      # length of the road in sites
+35      # length of the road in sites
 3       # maximum speed
 6       # forward look distance in lane
 6       # forward look distance in other lane

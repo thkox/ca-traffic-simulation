@@ -61,7 +61,7 @@ Vehicle::~Vehicle() {}
  * @return 0 if successful, nonzero otherwise
 
  */
-int Vehicle::updateGaps(Road* road_ptr) {
+int Vehicle::updateGaps(Road* road_ptr, int rank, int size) {
     // Locate the preceding Vehicle and update the forward gap
     this->gap_forward = this->lane_ptr->getSize() - 1;
     for (int i = this->position + 1; i < this->lane_ptr->getSize(); i++) {
@@ -110,7 +110,7 @@ int Vehicle::updateGaps(Road* road_ptr) {
  * @param road_ptr pointer to the Road in which the Vehicle is on
  * @return 0 if successful, nonzero otherwise
  */
-int Vehicle::performLaneSwitch(Road* road_ptr) {
+int Vehicle::performLaneSwitch(Road* road_ptr, int rank, int size) {
     // Evaluate if the Vehicle will change lanes and then perform the lane change
     if (this->gap_forward < this->look_forward &&
         this->gap_other_forward > this->look_other_forward &&

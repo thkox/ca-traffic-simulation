@@ -89,7 +89,7 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
         }
 
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->performLaneSwitch(this->road_ptr);
+            this->vehicles[n]->performLaneSwitch(this->road_ptr, int rank, int size);
         }
 
 #ifdef DEBUG

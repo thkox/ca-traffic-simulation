@@ -36,8 +36,8 @@ private:
 public:
     Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs);
     ~Vehicle();
-    int updateGaps(Road* road_ptr);
-    int performLaneSwitch(Road* road_ptr);
+    int updateGaps(Road* road_ptr, int rank, int size);
+    int performLaneSwitch(Road* road_ptr, int rank, int size);
     int performLaneMove();
     int getId();
     double getTravelTime(Inputs inputs);
