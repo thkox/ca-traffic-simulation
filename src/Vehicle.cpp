@@ -230,6 +230,34 @@ double Vehicle::getTravelTime(Inputs inputs) {
     return inputs.step_size * this->time_on_road;
 }
 
+int Vehicle::getPosition() const {
+    return this->position;
+}
+
+int Vehicle::getSpeed() const { return this->speed; }
+int Vehicle::getMaxSpeed() const { return this->max_speed; }
+int Vehicle::getGapForward() const { return this->gap_forward; }
+int Vehicle::getGapOtherForward() const { return this->gap_other_forward; }
+int Vehicle::getGapOtherBackward() const { return this->gap_other_backward; }
+int Vehicle::getLookForward() const { return this->look_forward; }
+int Vehicle::getLookOtherForward() const { return this->look_other_forward; }
+int Vehicle::getLookOtherBackward() const { return this->look_other_backward; }
+double Vehicle::getProbSlowDown() const { return this->prob_slow_down; }
+double Vehicle::getProbChange() const { return this->prob_change; }
+int Vehicle::getTimeOnRoad() const { return this->time_on_road; }
+
+void Vehicle::setMaxSpeed(int max_speed) { this->max_speed = max_speed; }
+void Vehicle::setGapForward(int gap) { this->gap_forward = gap; }
+void Vehicle::setGapOtherForward(int gap) { this->gap_other_forward = gap; }
+void Vehicle::setGapOtherBackward(int gap) { this->gap_other_backward = gap; }
+void Vehicle::setLookForward(int look) { this->look_forward = look; }
+void Vehicle::setLookOtherForward(int look) { this->look_other_forward = look; }
+void Vehicle::setLookOtherBackward(int look) { this->look_other_backward = look; }
+void Vehicle::setProbSlowDown(double prob) { this->prob_slow_down = prob; }
+void Vehicle::setProbChange(double prob) { this->prob_change = prob; }
+void Vehicle::setTimeOnRoad(int time) { this->time_on_road = time; }
+
+
 /**
  * Setter method for the speed of the Vehicle
  * @param speed

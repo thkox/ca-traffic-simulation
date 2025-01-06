@@ -42,6 +42,30 @@ public:
     int getId();
     double getTravelTime(Inputs inputs);
     int setSpeed(int speed);
+    int getPosition() const;  // Getter for the position
+    int getSpeed() const;
+    int getMaxSpeed() const;
+    int getGapForward() const;
+    int getGapOtherForward() const;
+    int getGapOtherBackward() const;
+    int getLookForward() const;
+    int getLookOtherForward() const;
+    int getLookOtherBackward() const;
+    double getProbSlowDown() const;
+    double getProbChange() const;
+    int getTimeOnRoad() const;
+
+    void setMaxSpeed(int max_speed);
+    void setGapForward(int gap);
+    void setGapOtherForward(int gap);
+    void setGapOtherBackward(int gap);
+    void setLookForward(int look);
+    void setLookOtherForward(int look);
+    void setLookOtherBackward(int look);
+    void setProbSlowDown(double prob);
+    void setProbChange(double prob);
+    void setTimeOnRoad(int time);
+
 
 #ifdef DEBUG
     void printGaps(int rank, std::ofstream &log_file);
