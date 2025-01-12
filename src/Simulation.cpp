@@ -24,7 +24,9 @@ Simulation::Simulation(Inputs inputs, int rank, int size, std::ofstream &log_fil
     const int length_per_process = inputs.length / size;
 
     this->start_site =rank * length_per_process;
-    this->end_site = (rank + 1) * length_per_process;
+    this->end_site = (rank + 1) * length_per_process - 1;
+    log_file << "Rank " << rank << ": start_site " << start_site
+                     << " end_site " << end_site << "\n";
 
     // Create the Road object for the simulation
     this->road_ptr = new Road(inputs, start_site, end_site, rank, log_file);
@@ -110,12 +112,17 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
         }
 
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            int time_on_road = this->vehicles[n]->performLaneMove();
+            int new_position = this->vehicles[n]->performLaneMove();
 
-            if (time_on_road != 0) {
-                    vehicles_to_remove.push_back(n);
+            if (new_position > this->end_site) {  // Check if the vehicle has left the boundary
+                log_file << "Rank " << rank << ": Vehicle " << this->vehicles[n]->getId()
+                         << " crossing boundary to rank " << rank + 1 << " at position " << new_position << "\n";
+
+                vehicles_to_remove.push_back(n);  // Mark for removal
             }
         }
+
+
 
         // Handle vehicles crossing boundaries
         handle_boundary_vehicles(rank, size, start_site, end_site, log_file);
@@ -189,113 +196,134 @@ void Simulation::handle_boundary_vehicles(int rank, int size, int start_pos, int
         Vehicle *vehicle = *it;
         int position = vehicle->getPosition();
 
+        // Log vehicle position before boundary check
+        log_file << "Rank " << rank << ": Vehicle " << vehicle->getId()
+                 << " try crossing boundary to rank " << rank + 1 << " at position " << position + (rank * 5) << " endpos: " << end_pos << "\n";
+
         // Identify vehicles that have moved past the end boundary
-        if (position < end_pos && rank < size - 1) {
+        if (position + (rank * 5) >= end_pos) {  // Adjusted condition to include exact boundary crossing
             log_file << "Rank " << rank << ": Vehicle " << vehicle->getId()
-                     << " crossing boundary to rank " << rank + 1 << " at position " << position << "\n";
+                     << " crossing boundary to rank " << rank + 1 << " at position " << position + (rank * 5) << " endpos: " << end_pos << "\n";
+
+            // Add the vehicle to the outgoing list
             outgoing_vehicles.push_back(vehicle);
-            it = vehicles.erase(it); // Remove from local list
+
+            // Erase the vehicle from the local list
+            it = vehicles.erase(it);
         } else {
             ++it;
         }
     }
 
-    // Communicate vehicles with the next process
+    // Transfer vehicles to the next process
     communicate_vehicles(rank, size, outgoing_vehicles, log_file);
 }
+
 
 
 /**
  * Communicates vehicles across boundaries using MPI
  */
 void Simulation::communicate_vehicles(int rank, int size, std::vector<Vehicle *> &outgoing_vehicles, std::ofstream &log_file) {
-    MPI_Status status;
 
     // Serialize outgoing vehicles into a buffer
-    std::vector<double> buffer;
+    std::vector<double> send_buffer;
     for (Vehicle *vehicle : outgoing_vehicles) {
-        buffer.push_back(vehicle->getId()); // 0: id
-        buffer.push_back(vehicle->getPosition()); // 1: position
-        buffer.push_back(vehicle->getSpeed()); // 2: speed
-        buffer.push_back(vehicle->getMaxSpeed()); // 3: max_speed
-        buffer.push_back(vehicle->getGapForward()); // 4: gap_forward
-        buffer.push_back(vehicle->getGapOtherForward()); // 5: gap_other_forward
-        buffer.push_back(vehicle->getGapOtherBackward()); // 6: gap_other_backward
-        buffer.push_back(vehicle->getLookForward()); // 7: look_forward
-        buffer.push_back(vehicle->getLookOtherForward()); // 8: look_other_forward
-        buffer.push_back(vehicle->getLookOtherBackward()); // 9: look_other_backward
-        buffer.push_back(vehicle->getProbSlowDown()); // 10: prob_slow_down
-        buffer.push_back(vehicle->getProbChange()); // 11: prob_change
-        buffer.push_back(vehicle->getTimeOnRoad()); // 12: time_on_road
+        send_buffer.push_back(vehicle->getId());
+        send_buffer.push_back(0);
+        send_buffer.push_back(vehicle->getSpeed());
+        send_buffer.push_back(vehicle->getMaxSpeed());
+        send_buffer.push_back(vehicle->getGapForward());
+        send_buffer.push_back(vehicle->getGapOtherForward());
+        send_buffer.push_back(vehicle->getGapOtherBackward());
+        send_buffer.push_back(vehicle->getLookForward());
+        send_buffer.push_back(vehicle->getLookOtherForward());
+        send_buffer.push_back(vehicle->getLookOtherBackward());
+        send_buffer.push_back(vehicle->getProbSlowDown());
+        send_buffer.push_back(vehicle->getProbChange());
+        send_buffer.push_back(vehicle->getTimeOnRoad());
     }
 
-    // Send the buffer to the next process
-    if (rank < size - 1) {
-        int buffer_size = buffer.size();
-        MPI_Send(&buffer_size, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
-        if (buffer_size > 0) {
-            MPI_Send(buffer.data(), buffer_size, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
+    // Determine send and receive ranks
+    int send_rank = (rank < size - 1) ? rank + 1 : MPI_PROC_NULL;
+    int recv_rank = (rank > 0) ? rank - 1 : MPI_PROC_NULL;
+
+    // Send and receive buffer sizes
+    int send_size = send_buffer.size();
+    int recv_size = 0;
+
+    MPI_Sendrecv(
+        &send_size, 1, MPI_INT, send_rank, 0,
+        &recv_size, 1, MPI_INT, recv_rank, 0,
+        MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    // Send and receive vehicle data
+    std::vector<double> recv_buffer(recv_size);
+    MPI_Sendrecv(
+        send_buffer.data(), send_size, MPI_DOUBLE, send_rank, 0,
+        recv_buffer.data(), recv_size, MPI_DOUBLE, recv_rank, 0,
+        MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    log_file << "Rank " << rank << ": Sent " << (send_size / 13) << " vehicles to rank " << send_rank
+             << " and received " << (recv_size / 13) << " vehicles from rank " << recv_rank << "\n";
+
+    // Deserialize received vehicles
+    for (int i = 0; i < recv_size; i += 13) {
+        int id = (int)recv_buffer[i];
+        int position = (int)recv_buffer[i + 1];
+        int speed = (int)recv_buffer[i + 2];
+        int max_speed = (int)recv_buffer[i + 3];
+        int gap_forward = (int)recv_buffer[i + 4];
+        int gap_other_forward = (int)recv_buffer[i + 5];
+        int gap_other_backward = (int)recv_buffer[i + 6];
+        int look_forward = (int)recv_buffer[i + 7];
+        int look_other_forward = (int)recv_buffer[i + 8];
+        int look_other_backward = (int)recv_buffer[i + 9];
+        double prob_slow_down = recv_buffer[i + 10];
+        double prob_change = recv_buffer[i + 11];
+        int time_on_road = (int)recv_buffer[i + 12];
+
+        // Adjust position to local coordinates for the receiving process
+        int local_position = position;
+        if (local_position < 0 || local_position >= (this->end_site - this->start_site)) {
+            log_file << "Rank " << rank << ": Error! Invalid local position " << local_position
+                     << " for vehicle " << id << " (Global position: " << position << ")\n";
+            continue;
         }
-        log_file << "Rank " << rank << ": Sent " << outgoing_vehicles.size() << " vehicles to rank " << rank + 1 << "\n";
-    }
 
-    // Receive vehicles from the previous process
-    if (rank > 0) {
-        log_file << "i am in "   << "\n";
-        int buffer_size;
-        MPI_Recv(&buffer_size, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &status);
-        if (buffer_size > 0) {
-            std::vector<double> recv_buffer(buffer_size);
-            MPI_Recv(recv_buffer.data(), buffer_size, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &status);
-
-            // Deserialize and add vehicles to the current process's road
-            for (int i = 0; i < buffer_size; i += 13) { // 13 fields per vehicle
-                int id = (int)recv_buffer[i];
-                int position = (int)recv_buffer[i + 1];
-                int speed = (int)recv_buffer[i + 2];
-                int max_speed = (int)recv_buffer[i + 3];
-                int gap_forward = (int)recv_buffer[i + 4];
-                int gap_other_forward = (int)recv_buffer[i + 5];
-                int gap_other_backward = (int)recv_buffer[i + 6];
-                int look_forward = (int)recv_buffer[i + 7];
-                int look_other_forward = (int)recv_buffer[i + 8];
-                int look_other_backward = (int)recv_buffer[i + 9];
-                double prob_slow_down = recv_buffer[i + 10];
-                double prob_change = recv_buffer[i + 11];
-                int time_on_road = (int)recv_buffer[i + 12];
-
-                // Adjust position to local coordinates for the receiving process
-                int local_position = position - this->start_site;
-                log_file << "local_position " << local_position  << "\n";
-
-                // Create a new vehicle
-                Vehicle *new_vehicle = new Vehicle(nullptr, id, local_position, this->inputs);
-                new_vehicle->setSpeed(speed);
-                new_vehicle->setMaxSpeed(max_speed);
-                new_vehicle->setGapForward(gap_forward);
-                new_vehicle->setGapOtherForward(gap_other_forward);
-                new_vehicle->setGapOtherBackward(gap_other_backward);
-                new_vehicle->setLookForward(look_forward);
-                new_vehicle->setLookOtherForward(look_other_forward);
-                new_vehicle->setLookOtherBackward(look_other_backward);
-                new_vehicle->setProbSlowDown(prob_slow_down);
-                new_vehicle->setProbChange(prob_change);
-                new_vehicle->setTimeOnRoad(time_on_road);
-
-                // Determine the lane to add the vehicle
-                int lane_number = (local_position < this->road_ptr->getLanes()[0]->getSize()) ? 0 : 1;
-                Lane *lane = this->road_ptr->getLanes()[lane_number];
-
-                // Add vehicle to the lane
-                lane->addVehicle(local_position, new_vehicle);
-
-                // Add vehicle to the vehicles list
-                this->vehicles.push_back(new_vehicle);
-
-                log_file << "Rank " << rank << ": Received and added vehicle with ID " << id << " to lane " << lane_number
-                         << " at local position " << local_position << "\n";
-            }
+        // Determine the lane
+        int lane_number = (local_position < this->road_ptr->getLanes()[0]->getSize()) ? 0 : 1;
+        if (lane_number < 0 || lane_number >= (int) this->road_ptr->getLanes().size()) {
+            log_file << "Rank " << rank << ": Error! Invalid lane number " << lane_number << " for vehicle " << id << "\n";
+            continue;
         }
+
+        Lane *lane = this->road_ptr->getLanes()[lane_number];
+        log_file << "Rank " << rank << ": Adding vehicle " << id << " to lane " << lane_number << " at position " << local_position << "\n";
+
+        // Create and add the vehicle
+        Vehicle *new_vehicle = new Vehicle(lane, id, local_position, this->inputs);
+        new_vehicle->setSpeed(speed);
+        new_vehicle->setMaxSpeed(max_speed);
+        new_vehicle->setGapForward(gap_forward);
+        new_vehicle->setGapOtherForward(gap_other_forward);
+        new_vehicle->setGapOtherBackward(gap_other_backward);
+        new_vehicle->setLookForward(look_forward);
+        new_vehicle->setLookOtherForward(look_other_forward);
+        new_vehicle->setLookOtherBackward(look_other_backward);
+        new_vehicle->setProbSlowDown(prob_slow_down);
+        new_vehicle->setProbChange(prob_change);
+        new_vehicle->setTimeOnRoad(time_on_road);
+
+        lane->addVehicle(local_position, new_vehicle);
+        this->vehicles.push_back(new_vehicle);
     }
 }
+
+
+
+
+
+
+
 

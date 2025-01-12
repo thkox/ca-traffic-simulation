@@ -157,7 +157,7 @@ int Vehicle::performLaneMove() {
         this->speed++;
 #ifdef DEBUG
         std::cout << "vehicle " << this->id << " increased speed " << this->speed - 1 << " -> " << this->speed
-            << std::endl;
+                  << std::endl;
 #endif
     }
 
@@ -169,29 +169,32 @@ int Vehicle::performLaneMove() {
 #endif
 
     if (this->speed > 0) {
-        if ( ((double) rand()) / ((double) RAND_MAX) <= this->prob_slow_down ) {
+        if (((double)rand()) / ((double)RAND_MAX) <= this->prob_slow_down) {
             this->speed--;
 #ifdef DEBUG
             std::cout << "vehicle " << this->id << " decreased speed " << this->speed + 1 << " -> " << this->speed
-                << std::endl;
+                      << std::endl;
 #endif
         }
     }
 
     if (this->speed > 0) {
         // Compute the new position of the vehicle
-        int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
+        int new_position = this->position + this->speed;
 
-        // If the vehicle reached the end of the road, remove the Vehicle from the Lane and return the time on road
-        if (this->position > new_position) {
+        // If the vehicle exceeds the end of the road, remove it from the lane and update its position
+        if (new_position >= this->lane_ptr->getSize()) {
 #ifdef DEBUG
-            std::cout << "vehicle " << this->id << " spent " << this->time_on_road << " steps on the road" << std::endl;
+            std::cout << "vehicle " << this->id << " spent " << this->time_on_road << " steps on the road and exited."
+                      << std::endl;
 #endif
-
-            // Remove vehicle from the Road
+            // Remove vehicle from the current lane
             this->lane_ptr->removeVehicle(this->position);
 
-            // Return the time on the Road
+            // Update position to reflect that it has left the process's domain
+            this->position = new_position;
+
+            // Return the time on the road as an indicator that it has exited
             return this->time_on_road;
         }
 
@@ -209,9 +212,10 @@ int Vehicle::performLaneMove() {
         this->position = new_position;
     }
 
-    // Return with no errors
+    // Return 0 if the vehicle is still within bounds
     return 0;
 }
+
 
 /**
  * Getter method for the ID number of the Vehicle

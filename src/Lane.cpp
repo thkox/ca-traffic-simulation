@@ -22,8 +22,8 @@ Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, 
     std::cout << "creating lane " << lane_num << "...";
 #endif
     // Allocate memory for the vehicle pointers list
-    this->sites.reserve(end_site - start_site);
-    this->sites.resize(end_site - start_site);
+    this->sites.reserve(end_site - start_site + 1);
+    this->sites.resize(end_site - start_site + 1);
 
     // Set the lane number for the lane
     this->lane_num = lane_num;
