@@ -28,6 +28,9 @@ public:
     Simulation(Inputs inputs, int rank, int size, std::ofstream &log_file);
     ~Simulation();
     int run_simulation(int rank, int size, std::ofstream &log_file);
+    void handle_boundary_vehicles(int rank, int size, int start_pos, int end_pos, std::ofstream &log_file);
+    void communicate_vehicles(int rank, int size, std::vector<Vehicle *> &outgoing_vehicles, std::ofstream &log_file);
+
 };
 
 
