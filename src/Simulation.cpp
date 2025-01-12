@@ -150,38 +150,30 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
             this->road_ptr->attemptSpawn(this->inputs, &(this->vehicles), &(this->next_id));
     }
 
-    // Print the total run time and average iterations per second and seconds per iteration
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    // Calculate the time elapsed for this process
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    auto time_elapsed = (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) /1000000.0;
-    std::cout << "--- Simulation Performance ---" << std::endl;
-    std::cout << "total computation time: " << time_elapsed << " [s]" << std::endl;
-    std::cout << "average time per iteration: " << time_elapsed / inputs.max_time << " [s]" << std::endl;
-    std::cout << "average iterating frequency: " << inputs.max_time / time_elapsed << " [iter/s]" << std::endl;
+    double time_elapsed = (std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) / 1000000.0;
 
-    log_file << "Rank " << rank << ": " << "--- Simulation Performance ---" << std::endl;
-    log_file << "Rank " << rank << ": " << "Total computation time: " << time_elapsed << " [s]" << std::endl;
-    log_file << "Rank " << rank << ": " << "Average time per iteration: " << time_elapsed / inputs.max_time << " [s]" << std::endl;
-    log_file << "Rank " << rank << ": " << "Average iterating frequency: " << inputs.max_time / time_elapsed << " [iter/s]" << std::endl;
+    // Use MPI_Reduce to find the maximum time_elapsed across all processes
+    double max_time_elapsed;
+    MPI_Reduce(&time_elapsed, &max_time_elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
-#ifdef DEBUG
-    // Print final road configuration
-    std::cout << "final road configuration" << std::endl;
-    log_file << "Rank " << rank << ": " << "Final road configuration" << std::endl;
+    if (rank == 0) {
+        // Rank 0 will print the overall execution time
+        std::cout << "--- Simulation Performance ---" << std::endl;
+        std::cout << "Total computation time (max across all processes): " << max_time_elapsed << " [s]" << std::endl;
+        std::cout << "Average time per iteration: " << max_time_elapsed / inputs.max_time << " [s]" << std::endl;
+        std::cout << "Average iterating frequency: " << inputs.max_time / max_time_elapsed << " [iter/s]" << std::endl;
 
-    this->road_ptr->printRoad(rank, log_file);
-#endif
+        log_file << "--- Simulation Performance ---" << std::endl;
+        log_file << "Total computation time (max across all processes): " << max_time_elapsed << " [s]" << std::endl;
+        log_file << "Average time per iteration: " << max_time_elapsed / inputs.max_time << " [s]" << std::endl;
+        log_file << "Average iterating frequency: " << inputs.max_time / max_time_elapsed << " [iter/s]" << std::endl;
+    }
 
-    // Print the average Vehicle time on the Road
-    std::cout << "--- Simulation Results ---" << std::endl;
-    std::cout << "time on road: avg=" << this->travel_time->getAverage() << ", std="
-              << pow(this->travel_time->getVariance(), 0.5) << ", N=" << this->travel_time->getNumSamples()
-              << std::endl;
-
-    log_file << "Rank " << rank << ": " << "--- Simulation Results ---" << std::endl;
-    log_file << "Rank " << rank << ": " << "time on road: avg=" << this->travel_time->getAverage() << ", std="
-                                        << pow(this->travel_time->getVariance(), 0.5) << ", N=" << this->travel_time->getNumSamples()
-                                        << std::endl;
-
+    MPI_Barrier(MPI_COMM_WORLD);
     // Return with no errors
     return 0;
 }
