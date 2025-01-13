@@ -6,7 +6,8 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
-
+#include <fstream>  // For std::ofstream
+#include <iostream> // For std::cout
 #include "Lane.h"
 #include "Vehicle.h"
 #include "Inputs.h"
@@ -16,18 +17,19 @@
  * @param inputs instance of the Inputs class with simulation inputs
  * @param lane_num the number of lane in the road, starting with zero as the first lane
  */
-Lane::Lane(Inputs inputs, int lane_num) {
+Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file) {
 #ifdef DEBUG
     std::cout << "creating lane " << lane_num << "...";
 #endif
     // Allocate memory for the vehicle pointers list
-    this->sites.reserve(inputs.length);
-    this->sites.resize(inputs.length);
+    this->sites.reserve(end_site - start_site + 1);
+    this->sites.resize(end_site - start_site + 1);
 
     // Set the lane number for the lane
     this->lane_num = lane_num;
 #ifdef DEBUG
     std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
+    log_file << "Rank " << rank << ": " << "Lane " << lane_num << " created with length " << this->sites.size() << std::endl;
 #endif
 
     this->steps_to_spawn = 0;
@@ -126,7 +128,7 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print the Lane to visualize the sites
  */
 #ifdef DEBUG
-void Lane::printLane() {
+void Lane::printLane(int rank, std::ofstream &log_file) {
     std::ostringstream lane_string_stream;
     for (int i = 0; i < (int) this->sites.size(); i++) {
         if (this->sites[i].empty()) {
@@ -136,5 +138,6 @@ void Lane::printLane() {
         }
     }
     std::cout << lane_string_stream.str() << std::endl;
+    log_file << "Rank " << rank << ": " << lane_string_stream.str() << std::endl;
 }
 #endif

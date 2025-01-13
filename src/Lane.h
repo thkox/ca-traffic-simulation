@@ -24,7 +24,7 @@ private:
     int lane_num;
     int steps_to_spawn;
 public:
-    Lane(Inputs inputs, int lane_num);
+    Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file);
     int getSize();
     int getLaneNumber();
     bool hasVehicleInSite(int site);
@@ -32,7 +32,7 @@ public:
     int removeVehicle(int site);
     int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr, CDF* interarrival_time_cdf);
 #ifdef DEBUG
-    void printLane();
+    void printLane(int rank, std::ofstream &log_file);
 #endif
 };
 

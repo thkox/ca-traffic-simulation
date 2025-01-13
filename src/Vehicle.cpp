@@ -4,7 +4,8 @@
 
 #include <cstdlib>
 #include <iomanip>
-
+#include <fstream>  // For std::ofstream
+#include <iostream> // For std::cout
 #include "Statistic.h"
 #include "Vehicle.h"
 #include "Lane.h"
@@ -60,7 +61,7 @@ Vehicle::~Vehicle() {}
  * @return 0 if successful, nonzero otherwise
 
  */
-int Vehicle::updateGaps(Road* road_ptr) {
+int Vehicle::updateGaps(Road* road_ptr, int rank, int size) {
     // Locate the preceding Vehicle and update the forward gap
     this->gap_forward = this->lane_ptr->getSize() - 1;
     for (int i = this->position + 1; i < this->lane_ptr->getSize(); i++) {
@@ -109,7 +110,7 @@ int Vehicle::updateGaps(Road* road_ptr) {
  * @param road_ptr pointer to the Road in which the Vehicle is on
  * @return 0 if successful, nonzero otherwise
  */
-int Vehicle::performLaneSwitch(Road* road_ptr) {
+int Vehicle::performLaneSwitch(Road* road_ptr, int rank, int size) {
     // Evaluate if the Vehicle will change lanes and then perform the lane change
     if (this->gap_forward < this->look_forward &&
         this->gap_other_forward > this->look_other_forward &&
@@ -156,7 +157,7 @@ int Vehicle::performLaneMove() {
         this->speed++;
 #ifdef DEBUG
         std::cout << "vehicle " << this->id << " increased speed " << this->speed - 1 << " -> " << this->speed
-            << std::endl;
+                  << std::endl;
 #endif
     }
 
@@ -168,29 +169,32 @@ int Vehicle::performLaneMove() {
 #endif
 
     if (this->speed > 0) {
-        if ( ((double) rand()) / ((double) RAND_MAX) <= this->prob_slow_down ) {
+        if (((double)rand()) / ((double)RAND_MAX) <= this->prob_slow_down) {
             this->speed--;
 #ifdef DEBUG
             std::cout << "vehicle " << this->id << " decreased speed " << this->speed + 1 << " -> " << this->speed
-                << std::endl;
+                      << std::endl;
 #endif
         }
     }
 
     if (this->speed > 0) {
         // Compute the new position of the vehicle
-        int new_position = (this->position + this->speed) % this->lane_ptr->getSize();
+        int new_position = this->position + this->speed;
 
-        // If the vehicle reached the end of the road, remove the Vehicle from the Lane and return the time on road
-        if (this->position > new_position) {
+        // If the vehicle exceeds the end of the road, remove it from the lane and update its position
+        if (new_position >= this->lane_ptr->getSize()) {
 #ifdef DEBUG
-            std::cout << "vehicle " << this->id << " spent " << this->time_on_road << " steps on the road" << std::endl;
+            std::cout << "vehicle " << this->id << " spent " << this->time_on_road << " steps on the road and exited."
+                      << std::endl;
 #endif
-
-            // Remove vehicle from the Road
+            // Remove vehicle from the current lane
             this->lane_ptr->removeVehicle(this->position);
 
-            // Return the time on the Road
+            // Update position to reflect that it has left the process's domain
+            this->position = new_position;
+
+            // Return the time on the road as an indicator that it has exited
             return this->time_on_road;
         }
 
@@ -208,9 +212,10 @@ int Vehicle::performLaneMove() {
         this->position = new_position;
     }
 
-    // Return with no errors
+    // Return 0 if the vehicle is still within bounds
     return 0;
 }
+
 
 /**
  * Getter method for the ID number of the Vehicle
@@ -229,6 +234,34 @@ double Vehicle::getTravelTime(Inputs inputs) {
     return inputs.step_size * this->time_on_road;
 }
 
+int Vehicle::getPosition() const {
+    return this->position;
+}
+
+int Vehicle::getSpeed() const { return this->speed; }
+int Vehicle::getMaxSpeed() const { return this->max_speed; }
+int Vehicle::getGapForward() const { return this->gap_forward; }
+int Vehicle::getGapOtherForward() const { return this->gap_other_forward; }
+int Vehicle::getGapOtherBackward() const { return this->gap_other_backward; }
+int Vehicle::getLookForward() const { return this->look_forward; }
+int Vehicle::getLookOtherForward() const { return this->look_other_forward; }
+int Vehicle::getLookOtherBackward() const { return this->look_other_backward; }
+double Vehicle::getProbSlowDown() const { return this->prob_slow_down; }
+double Vehicle::getProbChange() const { return this->prob_change; }
+int Vehicle::getTimeOnRoad() const { return this->time_on_road; }
+
+void Vehicle::setMaxSpeed(int max_speed) { this->max_speed = max_speed; }
+void Vehicle::setGapForward(int gap) { this->gap_forward = gap; }
+void Vehicle::setGapOtherForward(int gap) { this->gap_other_forward = gap; }
+void Vehicle::setGapOtherBackward(int gap) { this->gap_other_backward = gap; }
+void Vehicle::setLookForward(int look) { this->look_forward = look; }
+void Vehicle::setLookOtherForward(int look) { this->look_other_forward = look; }
+void Vehicle::setLookOtherBackward(int look) { this->look_other_backward = look; }
+void Vehicle::setProbSlowDown(double prob) { this->prob_slow_down = prob; }
+void Vehicle::setProbChange(double prob) { this->prob_change = prob; }
+void Vehicle::setTimeOnRoad(int time) { this->time_on_road = time; }
+
+
 /**
  * Setter method for the speed of the Vehicle
  * @param speed
@@ -244,8 +277,10 @@ int Vehicle::setSpeed(int speed) {
  * Debug method for printing the gap information of the Vehicle
  */
 #ifdef DEBUG
-void Vehicle::printGaps() {
+void Vehicle::printGaps(int rank, std::ofstream &log_file) {
     std::cout << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
+        << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
+    log_file << "Rank " << rank << ": " << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
         << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
 }
 #endif

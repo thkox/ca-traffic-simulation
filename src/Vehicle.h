@@ -36,15 +36,39 @@ private:
 public:
     Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs);
     ~Vehicle();
-    int updateGaps(Road* road_ptr);
-    int performLaneSwitch(Road* road_ptr);
+    int updateGaps(Road* road_ptr, int rank, int size);
+    int performLaneSwitch(Road* road_ptr, int rank, int size);
     int performLaneMove();
     int getId();
     double getTravelTime(Inputs inputs);
     int setSpeed(int speed);
+    int getPosition() const;  // Getter for the position
+    int getSpeed() const;
+    int getMaxSpeed() const;
+    int getGapForward() const;
+    int getGapOtherForward() const;
+    int getGapOtherBackward() const;
+    int getLookForward() const;
+    int getLookOtherForward() const;
+    int getLookOtherBackward() const;
+    double getProbSlowDown() const;
+    double getProbChange() const;
+    int getTimeOnRoad() const;
+
+    void setMaxSpeed(int max_speed);
+    void setGapForward(int gap);
+    void setGapOtherForward(int gap);
+    void setGapOtherBackward(int gap);
+    void setLookForward(int look);
+    void setLookOtherForward(int look);
+    void setLookOtherBackward(int look);
+    void setProbSlowDown(double prob);
+    void setProbChange(double prob);
+    void setTimeOnRoad(int time);
+
 
 #ifdef DEBUG
-    void printGaps();
+    void printGaps(int rank, std::ofstream &log_file);
 #endif
 };
 
