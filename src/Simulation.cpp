@@ -85,7 +85,7 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
         // Perform the lane switch step for all vehicles
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr, rank, size, log_file);
+            this->vehicles[n]->updateGaps(this->road_ptr, log_file);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
@@ -105,25 +105,27 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
         // Perform the independent lane updates
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr, rank, size, log_file);
+            this->vehicles[n]->updateGaps(this->road_ptr, log_file);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
         }
 
-        for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            int new_position = this->vehicles[n]->performLaneMove();
-
-            if (new_position > this->end_site) {  // Check if the vehicle has left the boundary
-                log_file << "Rank " << rank << ": Vehicle " << this->vehicles[n]->getId()
-                         << " crossing boundary to rank " << rank + 1 << " at position " << new_position << "\n";
-
-                vehicles_to_remove.push_back(n);  // Mark for removal
-            }
-        }
-
         // Handle vehicles crossing boundaries
         handle_boundary_vehicles(rank, size, start_site, end_site, log_file);
+
+        for (int n = 0; n < (int) this->vehicles.size(); n++) {
+            int move_result = this->vehicles[n]->performLaneMove();
+
+            // If the vehicle has exited, mark it for transfer
+            if (move_result == -1) {
+                log_file << "Rank " << rank << ": Vehicle " << this->vehicles[n]->getId()
+                         << " crossing boundary to rank " << rank + 1 << " at position " << this->vehicles[n]->getPosition() + (rank * (inputs.length / size))
+                         << "\n";
+
+                vehicles_to_remove.push_back(n); // Mark for removal
+            }
+        }
 
         // End of iteration steps
         // Increment time
@@ -181,25 +183,23 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
  */
 void Simulation::handle_boundary_vehicles(int rank, int size, int start_pos, int end_pos, std::ofstream &log_file) {
     std::vector<Vehicle *> outgoing_vehicles;
-
     for (auto it = vehicles.begin(); it != vehicles.end();) {
         Vehicle *vehicle = *it;
         int position = vehicle->getPosition();
 
         // Log vehicle position before boundary check
         log_file << "Rank " << rank << ": Vehicle " << vehicle->getId()
-                 << " try crossing boundary to rank " << rank + 1 << " at position " << position + (rank * 5) << " endpos: " << end_pos << "\n";
+                 << " try crossing boundary to rank " << rank + 1 << " at position " << position + (rank * (inputs.length / size)) << " endpos: " << end_pos << "\n";
 
         // Identify vehicles that have moved past the end boundary
-        if (position + (rank * 5) >= end_pos) {  // Adjusted condition to include exact boundary crossing
+        if (position + (rank * (inputs.length / size)) >= end_pos) {  // Adjusted condition to include exact boundary crossing
             log_file << "Rank " << rank << ": Vehicle " << vehicle->getId()
-                     << " crossing boundary to rank " << rank + 1 << " at position " << position + (rank * 5) << " endpos: " << end_pos << "\n";
+                     << " crossing boundary to rank " << rank + 1 << " at position " << position + (rank * (inputs.length / size)) << " endpos: " << end_pos << "\n";
 
             // Add the vehicle to the outgoing list
             outgoing_vehicles.push_back(vehicle);
 
-            // Erase the vehicle from the local list
-            it = vehicles.erase(it);
+            ++it;
         } else {
             ++it;
         }
