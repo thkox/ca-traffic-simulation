@@ -60,7 +60,6 @@ Vehicle::~Vehicle() {}
  * Update the perceived gaps between the Vehicle and the surrounding Vehicles in the Road
  * @param road_ptr pointer to the Road that the Vehicle is in
  * @return 0 if successful, nonzero otherwise
-
  */
 int Vehicle::updateGaps(Road* road_ptr, std::ofstream &log_file) {
     // Locate the preceding Vehicle and update the forward gap
