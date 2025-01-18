@@ -83,9 +83,11 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
         log_file << "Rank " << rank << ": " << "Performing lane switches..." << std::endl;
 #endif
 
+        this->road_ptr->calculate_gaps_from_neighbor_processes(rank, size, log_file);
+
         // Perform the lane switch step for all vehicles
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr, rank, size, log_file);
+            this->vehicles[n]->updateGaps(this->road_ptr, log_file);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
@@ -103,9 +105,12 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
 #endif
 
+        // Recalculate gaps after lane switches
+        this->road_ptr->calculate_gaps_from_neighbor_processes(rank, size, log_file);
+
         // Perform the independent lane updates
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr, rank, size, log_file);
+            this->vehicles[n]->updateGaps(this->road_ptr, log_file);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif

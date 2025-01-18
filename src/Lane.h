@@ -23,6 +23,10 @@ private:
     std::vector<std::deque<Vehicle*>> sites;
     int lane_num;
     int steps_to_spawn;
+    int gap_from_start;
+    int gap_from_end;
+    int gap_prev_process;
+    int gap_next_process;
 public:
     Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file);
     int getSize();
@@ -31,6 +35,12 @@ public:
     int addVehicle(int site, Vehicle* vehicle_ptr);
     int removeVehicle(int site);
     int attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next_id_ptr, CDF* interarrival_time_cdf);
+    int getGapFromStart();
+    int getGapFromEnd();
+    int getGapPrevProcess();
+    int getGapNextProcess();
+    void setGapPrevProcess(int gap);
+    void setGapNextProcess(int gap);
 #ifdef DEBUG
     void printLane(int rank, std::ofstream &log_file);
 #endif

@@ -141,3 +141,47 @@ void Lane::printLane(int rank, std::ofstream &log_file) {
     log_file << "Rank " << rank << ": " << lane_string_stream.str() << std::endl;
 }
 #endif
+
+int Lane::getGapFromStart() {
+    size_t local_gap_start = this->sites.size();  // Start with the maximum gap
+
+    // Iterate through sites to find the first vehicle
+    for (size_t i = 0; i < this->sites.size(); i++) {
+        if (!this->sites[i].empty()) {
+            local_gap_start = i;  // Found the first vehicle, set gap
+            break;
+        }
+    }
+
+    return static_cast<int>(local_gap_start); // Return the gap from the start of the lane
+}
+
+int Lane::getGapFromEnd() {
+    size_t local_gap_end = this->sites.size();  // Start with the maximum gap
+
+    // Iterate through sites to find the last vehicle
+    for (size_t i = this->sites.size() - 1; i >= 0; i--) {
+        if (!this->sites[i].empty()) {
+            local_gap_end = this->sites.size() - 1 - i;  // Found the last vehicle, set gap
+            break;
+        }
+    }
+
+    return static_cast<int>(local_gap_end); // Return the gap from the end of the lane
+}
+
+int Lane::getGapPrevProcess() {
+    return this->gap_prev_process;
+}
+
+int Lane::getGapNextProcess() {
+    return this->gap_next_process;
+}
+
+void Lane::setGapPrevProcess(int gap) {
+    this->gap_prev_process = gap;
+}
+
+void Lane::setGapNextProcess(int gap) {
+    this->gap_next_process = gap;
+}

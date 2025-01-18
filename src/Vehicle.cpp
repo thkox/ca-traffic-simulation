@@ -60,134 +60,18 @@ Vehicle::~Vehicle() {}
  * Update the perceived gaps between the Vehicle and the surrounding Vehicles in the Road
  * @param road_ptr pointer to the Road that the Vehicle is in
  * @return 0 if successful, nonzero otherwise
-
  */
-int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_file) {
-    int local_gap_start = this->lane_ptr->getSize();  // Start with the maximum gap
-    int local_gap_end = this->lane_ptr->getSize();    // Start with the maximum gap
-
-    // Calculate local_gap_start (gap from start of the lane to the first vehicle)
-    for (int i = 0; i < this->lane_ptr->getSize(); i++) {
+int Vehicle::updateGaps(Road* road_ptr, std::ofstream &log_file) {
+    // Locate the preceding Vehicle and update the forward gap
+    this->gap_forward = this->lane_ptr->getSize() - 1;
+    for (int i = this->position + 1; i < this->lane_ptr->getSize(); i++) {
         if (this->lane_ptr->hasVehicleInSite(i)) {
-            local_gap_start = i;
+            this->gap_forward = i - this->position - 1;
             break;
         }
     }
 
-    // Calculate local_gap_end (gap from last vehicle to the end of the lane)
-    for (int i = this->lane_ptr->getSize() - 1; i >= 0; i--) {
-        if (this->lane_ptr->hasVehicleInSite(i)) {
-            local_gap_end = this->lane_ptr->getSize() - 1 - i;
-            break;
-        }
-    }
-
-#ifdef DEBUG
-    std::cout << "Rank " << rank << ": local_gap_start = " << local_gap_start << ", local_gap_end = " << local_gap_end << std::endl;
-    log_file << "Rank " << rank << ": local_gap_start = " << local_gap_start << ", local_gap_end = " << local_gap_end << std::endl;
-#endif
-
-    int gap_end_recv_from_prev = -1, gap_start_recv_from_next = -1;
-
-    int num_of_req = 0;
-
-    if (rank > 0) {
-        num_of_req = 2;
-    } else {
-        num_of_req = 4;
-    }
-    MPI_Request requests[num_of_req];
-    int request_count = 0;
-
-    if (rank > 0) { // Communicate with previous process
-        MPI_Isend(&local_gap_start, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, &requests[request_count++]);
-        MPI_Irecv(&gap_end_recv_from_prev, 1, MPI_INT, rank - 1, 1, MPI_COMM_WORLD, &requests[request_count++]);
-#ifdef DEBUG
-        std::cout << "Rank " << rank << ": Sent local_gap_start to rank " << rank - 1 << " and received gap_end_recv_from_prev: " << gap_end_recv_from_prev << std::endl;
-        log_file << "Rank " << rank << ": Sent local_gap_start to rank " << rank - 1 << " and received gap_end_recv_from_prev: " << gap_end_recv_from_prev << std::endl;
-#endif
-    }
-    if (rank < size - 1) {
-        MPI_Isend(&local_gap_end, 1, MPI_INT, rank + 1, 1, MPI_COMM_WORLD, &requests[request_count++]);
-        MPI_Irecv(&gap_start_recv_from_next, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD, &requests[request_count++]);
-#ifdef DEBUG
-        std::cout << "Rank " << rank << ": Sent local_gap_end to rank " << rank + 1 << " and received gap_start_recv_from_next: " << gap_start_recv_from_next << std::endl;
-        log_file << "Rank " << rank << ": Sent local_gap_end to rank " << rank + 1 << " and received gap_start_recv_from_next: " << gap_start_recv_from_next << std::endl;
-#endif
-    }
-
-#ifdef DEBUG
-    std::cout << "Rank " << rank << ": Starting MPI communication. gap_end_recv_from_prev = "
-              << gap_end_recv_from_prev << ", gap_start_recv_from_next = " << gap_start_recv_from_next << std::endl;
-    log_file << "Rank " << rank << ": Starting MPI communication. gap_end_recv_from_prev = "
-             << gap_end_recv_from_prev << ", gap_start_recv_from_next = " << gap_start_recv_from_next << std::endl;
-    log_file << "Rank " << rank << ": " << "request_count:" << request_count
-             << "requests[0]:" << requests[0] << "requests[1]:" << requests[1]
-             << "requests[2]:" << requests[2] << "requests[3]:" << requests[3]
-    << std::endl;
-#endif
-
-    // Wait for all non-blocking operations to complete
-    // MPI_Waitall(request_count, requests, MPI_STATUSES_IGNORE);
-
-#ifdef DEBUG
-    std::cout << "Rank " << rank << ": Completed MPI communication. gap_end_recv_from_prev = "
-              << gap_end_recv_from_prev << ", gap_start_recv_from_next = " << gap_start_recv_from_next << std::endl;
-    log_file << "Rank " << rank << ": Completed MPI communication. gap_end_recv_from_prev = "
-             << gap_end_recv_from_prev << ", gap_start_recv_from_next = " << gap_start_recv_from_next << std::endl;
-#endif
-
-    if (rank > 0 && gap_end_recv_from_prev != -1) {
-        this->gap_forward = std::min(this->gap_forward, gap_end_recv_from_prev);
-#ifdef DEBUG
-        std::cout << "Rank " << rank << ": Updated gap_forward to " << this->gap_forward << std::endl;
-        log_file << "Rank " << rank << ": Updated gap_forward to " << this->gap_forward << std::endl;
-#endif
-    }
-    if (rank < size - 1 && gap_start_recv_from_next != -1) {
-        this->gap_other_backward = std::min(this->gap_other_backward, gap_start_recv_from_next);
-#ifdef DEBUG
-        std::cout << "Rank " << rank << ": Updated gap_other_backward to " << this->gap_other_backward << std::endl;
-        log_file << "Rank " << rank << ": Updated gap_other_backward to " << this->gap_other_backward << std::endl;
-#endif
-    }
-
-    std::vector<int> global_gap_start(size, this->lane_ptr->getSize());
-    std::vector<int> global_gap_end(size, this->lane_ptr->getSize());
-
-    MPI_Gather(&local_gap_start, 1, MPI_INT, global_gap_start.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Gather(&local_gap_end, 1, MPI_INT, global_gap_end.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-#ifdef DEBUG
-    if (rank == 0) {
-        std::cout << "Rank " << rank << ": Gathered global gap data." << std::endl;
-        log_file << "Rank " << rank << ": Gathered global gap data." << std::endl;
-    }
-#endif
-
-    MPI_Bcast(global_gap_start.data(), size, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(global_gap_end.data(), size, MPI_INT, 0, MPI_COMM_WORLD);
-
-#ifdef DEBUG
-    std::cout << "Rank " << rank << ": Broadcasted global gap data." << std::endl;
-    log_file << "Rank " << rank << ": Broadcasted global gap data." << std::endl;
-#endif
-
-    if (rank > 0) {
-        this->gap_forward = std::min(this->gap_forward, global_gap_end[rank - 1]);
-    }
-    if (rank < size - 1) {
-        this->gap_other_backward = std::min(this->gap_other_backward, global_gap_start[rank + 1]);
-    }
-
-#ifdef DEBUG
-    std::cout << "Rank " << rank << ": Final gap_forward = " << this->gap_forward
-              << ", gap_other_backward = " << this->gap_other_backward << std::endl;
-    log_file << "Rank " << rank << ": Final gap_forward = " << this->gap_forward
-             << ", gap_other_backward = " << this->gap_other_backward << std::endl;
-#endif
-
-    // Update the perceived gaps within the local segment
+    // Update vehicle look forward distances
     this->look_forward = this->speed + 1;
     this->look_other_forward = this->look_forward;
 
@@ -217,6 +101,7 @@ int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_f
         }
     }
 
+    // Return with zero errors
     return 0;
 }
 

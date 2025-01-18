@@ -27,6 +27,8 @@ public:
 
 #ifdef DEBUG
     void printRoad(int rank, std::ofstream &log_file);
+
+    void calculate_gaps_from_neighbor_processes(int rank, int size, std::ofstream &log_file);
 #endif
 };
 
