@@ -21,7 +21,9 @@ Road::Road(Inputs inputs, int start_site, int end_site, int rank) {
         this->lanes.push_back(new Lane(inputs, i, start_site, end_site, rank));
     }
 #ifdef DEBUG
-    std::cout << "done creating road" << std::endl;
+    if (rank == 0) {
+        std::cout << "done creating road" << std::endl;
+    }
 #endif
 
     this->interarrival_time_cdf = new CDF();
@@ -69,10 +71,11 @@ int Road::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print all the Lanes of the Road for visualizing the sites in the Road
  */
 #ifdef DEBUG
-void Road::printRoad() {
+void Road::printRoad(int rank, int size) {
+    MPI_Barrier(MPI_COMM_WORLD);
     for (int i = this->lanes.size() - 1; i >= 0; i--) {
-        this->lanes[i]->printLane();
-
+        this->lanes[i]->printLane(rank, size);
+        MPI_Barrier(MPI_COMM_WORLD);
     }
 }
 #endif

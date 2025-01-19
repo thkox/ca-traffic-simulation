@@ -42,7 +42,7 @@ public:
     void setGapPrevProcess(int gap);
     void setGapNextProcess(int gap);
 #ifdef DEBUG
-    void printLane();
+    void printLane(int rank, int size);
 #endif
 };
 

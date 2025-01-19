@@ -73,16 +73,16 @@ int Simulation::run_simulation(int rank, int size) {
 #ifdef DEBUG
         MPI_Barrier(MPI_COMM_WORLD);
 
-        std::cout << "road configuration at time " << time << ":" << std::endl;
-        this->road_ptr->printRoad();
+        if (rank == 0) {
+            std::cout << "road configuration at time " << time << ":" << std::endl;
+        }
+        this->road_ptr->printRoad(rank, size);
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        this->road_ptr->printRoad();
-
-        MPI_Barrier(MPI_COMM_WORLD);
-
-        std::cout << "performing lane switches..." << std::endl;
+        if (rank == 0) {
+            std::cout << "performing lane switches..." << std::endl;
+        }
 #endif
 
         this->road_ptr->calculate_gaps_from_neighbor_processes(rank, size);
@@ -103,8 +103,10 @@ int Simulation::run_simulation(int rank, int size) {
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        this->road_ptr->printRoad();
-        std::cout << "performing lane movements..." << std::endl;
+        this->road_ptr->printRoad(rank, size);
+        if (rank == 0) {
+            std::cout << "performing lane movements..." << std::endl;
+        }
 
         MPI_Barrier(MPI_COMM_WORLD);
 

@@ -9,6 +9,9 @@
 #include <fstream>  // For std::ofstream
 #include <iostream> // For std::cout
 #include "Lane.h"
+
+#include <mpi.h>
+
 #include "Vehicle.h"
 #include "Inputs.h"
 
@@ -19,7 +22,9 @@
  */
 Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank) {
 #ifdef DEBUG
-    std::cout << "creating lane " << lane_num << "...";
+    if (rank == 0) {
+        std::cout << "creating lane " << lane_num << "...";
+    }
 #endif
     // Allocate memory for the vehicle pointers list
     this->sites.reserve(end_site - start_site + 1);
@@ -28,7 +33,9 @@ Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank) 
     // Set the lane number for the lane
     this->lane_num = lane_num;
 #ifdef DEBUG
-    std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
+    if (rank == 0) {
+        std::cout << "done, lane " << lane_num << " created with length " << inputs.length << std::endl;
+    }
 #endif
 
     this->steps_to_spawn = 0;
@@ -130,7 +137,7 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print the Lane to visualize the sites
  */
 #ifdef DEBUG
-void Lane::printLane() {
+void Lane::printLane(int rank, int size) {
     std::ostringstream lane_string_stream;
     for (int i = 0; i < (int) this->sites.size(); i++) {
         if (this->sites[i].empty()) {
