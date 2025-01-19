@@ -54,7 +54,6 @@ int main(int argc, char** argv) {
     // Delete the Simulation object only in the master process
     delete simulation_ptr;
 
-    // MPI Finalize
     MPI_Finalize();
 
     // Return with no errors

@@ -8,8 +8,8 @@
 #include "Road.h"
 #include <mpi.h>
 #include "Simulation.h"
-#include <fstream>  // For std::ofstream
-#include <iostream> // For std::cout
+#include <fstream>
+#include <iostream>
 #include <unistd.h>
 
 #include "Vehicle.h"
@@ -191,10 +191,8 @@ void Simulation::handle_boundary_vehicles(int rank, int size, int start_pos, int
         Vehicle *vehicle = *it;
         int position = vehicle->getPosition();
 
-        // Identify vehicles that have moved past the end boundary
-        if (position + (rank * (inputs.length / size)) >= end_pos) {  // Adjusted condition to include exact boundary crossing
+        if (position + (rank * (inputs.length / size)) >= end_pos) {
 
-            // Add the vehicle to the outgoing list
             outgoing_vehicles.push_back(vehicle);
 
             ++it;
@@ -203,7 +201,6 @@ void Simulation::handle_boundary_vehicles(int rank, int size, int start_pos, int
         }
     }
 
-    // Transfer vehicles to the next process
     communicate_vehicles(rank, size, outgoing_vehicles);
 }
 
@@ -214,7 +211,6 @@ void Simulation::handle_boundary_vehicles(int rank, int size, int start_pos, int
  */
 void Simulation::communicate_vehicles(int rank, int size, std::vector<Vehicle *> &outgoing_vehicles) {
 
-    // Serialize outgoing vehicles into a buffer
     std::vector<double> send_buffer;
     for (Vehicle *vehicle : outgoing_vehicles) {
         send_buffer.push_back(vehicle->getId());
@@ -232,11 +228,9 @@ void Simulation::communicate_vehicles(int rank, int size, std::vector<Vehicle *>
         send_buffer.push_back(vehicle->getTimeOnRoad());
     }
 
-    // Determine send and receive ranks
     int send_rank = (rank < size - 1) ? rank + 1 : MPI_PROC_NULL;
     int recv_rank = (rank > 0) ? rank - 1 : MPI_PROC_NULL;
 
-    // Send and receive buffer sizes
     int send_size = send_buffer.size();
     int recv_size = 0;
 
@@ -252,7 +246,6 @@ void Simulation::communicate_vehicles(int rank, int size, std::vector<Vehicle *>
         recv_buffer.data(), recv_size, MPI_DOUBLE, recv_rank, 0,
         MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-    // Deserialize received vehicles
     for (int i = 0; i < recv_size; i += 13) {
         int id = (int)recv_buffer[i];
         int position = (int)recv_buffer[i + 1];
@@ -268,13 +261,11 @@ void Simulation::communicate_vehicles(int rank, int size, std::vector<Vehicle *>
         double prob_change = recv_buffer[i + 11];
         int time_on_road = (int)recv_buffer[i + 12];
 
-        // Adjust position to local coordinates for the receiving process
         int local_position = position;
         if (local_position < 0 || local_position >= (this->end_site - this->start_site)) {
             continue;
         }
 
-        // Determine the lane
         int lane_number = (local_position < this->road_ptr->getLanes()[0]->getSize()) ? 0 : 1;
         if (lane_number < 0 || lane_number >= (int) this->road_ptr->getLanes().size()) {
             continue;
@@ -282,7 +273,6 @@ void Simulation::communicate_vehicles(int rank, int size, std::vector<Vehicle *>
 
         Lane *lane = this->road_ptr->getLanes()[lane_number];
 
-        // Create and add the vehicle
         Vehicle *new_vehicle = new Vehicle(lane, id, local_position, this->inputs);
         new_vehicle->setSpeed(speed);
         new_vehicle->setMaxSpeed(max_speed);

@@ -4,8 +4,8 @@
 
 #include "Road.h"
 #include "Inputs.h"
-#include <fstream>  // For std::ofstream
-#include <iostream> // For std::cout
+#include <fstream>
+#include <iostream>
 #include <mpi.h>
 
 /**

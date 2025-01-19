@@ -4,8 +4,8 @@
 
 #include <cstdlib>
 #include <iomanip>
-#include <fstream>  // For std::ofstream
-#include <iostream> // For std::cout
+#include <fstream>
+#include <iostream>
 #include <mpi.h>
 #include "Statistic.h"
 #include "Vehicle.h"

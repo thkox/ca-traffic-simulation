@@ -42,7 +42,7 @@ public:
     int getId();
     double getTravelTime(Inputs inputs);
     int setSpeed(int speed);
-    int getPosition() const;  // Getter for the position
+    int getPosition() const;
     int getSpeed() const;
     int getMaxSpeed() const;
     int getGapForward() const;

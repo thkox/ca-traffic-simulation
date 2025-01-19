@@ -6,8 +6,8 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
-#include <fstream>  // For std::ofstream
-#include <iostream> // For std::cout
+#include <fstream>
+#include <iostream>
 #include "Lane.h"
 
 #include <mpi.h>
@@ -146,36 +146,36 @@ void Lane::printLane(int rank, int size) {
             lane_string_stream << "[" << std::setw(3) << this->sites[i].front()->getId() << "]";
         }
     }
-    std::cout << lane_string_stream.str() << std::endl;
+    std::cout << "Rank: " << rank  << " (lane " << lane_num <<") " << lane_string_stream.str() << std::endl;
 }
 #endif
 
 int Lane::getGapFromStart() {
     size_t local_gap_start = this->sites.size();  // Start with the maximum gap
 
-    // Iterate through sites to find the first vehicle
+
     for (size_t i = 0; i < this->sites.size(); i++) {
         if (!this->sites[i].empty()) {
-            local_gap_start = i;  // Found the first vehicle, set gap
+            local_gap_start = i;
             break;
         }
     }
 
-    return static_cast<int>(local_gap_start); // Return the gap from the start of the lane
+    return static_cast<int>(local_gap_start);
 }
 
 int Lane::getGapFromEnd() {
-    size_t local_gap_end = this->sites.size();  // Start with the maximum gap
+    size_t local_gap_end = this->sites.size();
 
-    // Iterate through sites to find the last vehicle
+
     for (size_t i = this->sites.size() - 1; i >= 0; i--) {
         if (!this->sites[i].empty()) {
-            local_gap_end = this->sites.size() - 1 - i;  // Found the last vehicle, set gap
+            local_gap_end = this->sites.size() - 1 - i;
             break;
         }
     }
 
-    return static_cast<int>(local_gap_end); // Return the gap from the end of the lane
+    return static_cast<int>(local_gap_end);
 }
 
 int Lane::getGapPrevProcess() {
