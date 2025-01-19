@@ -6,9 +6,12 @@
 #include <cstdio>
 #include <sstream>
 #include <iomanip>
-#include <fstream>  // For std::ofstream
-#include <iostream> // For std::cout
+#include <fstream>
+#include <iostream>
 #include "Lane.h"
+
+#include <mpi.h>
+
 #include "Vehicle.h"
 #include "Inputs.h"
 
@@ -17,9 +20,11 @@
  * @param inputs instance of the Inputs class with simulation inputs
  * @param lane_num the number of lane in the road, starting with zero as the first lane
  */
-Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file) {
+Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank) {
 #ifdef DEBUG
-    std::cout << "creating lane " << lane_num << "...";
+    if (rank == 0) {
+        std::cout << "creating lane " << lane_num << "...";
+    }
 #endif
     // Allocate memory for the vehicle pointers list
     this->sites.reserve(end_site - start_site + 1);
@@ -28,8 +33,9 @@ Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, 
     // Set the lane number for the lane
     this->lane_num = lane_num;
 #ifdef DEBUG
-    std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
-    log_file << "Rank " << rank << ": " << "Lane " << lane_num << " created with length " << this->sites.size() << std::endl;
+    if (rank == 0) {
+        std::cout << "done, lane " << lane_num << " created with length " << inputs.length << std::endl;
+    }
 #endif
 
     this->steps_to_spawn = 0;
@@ -131,7 +137,7 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print the Lane to visualize the sites
  */
 #ifdef DEBUG
-void Lane::printLane(int rank, std::ofstream &log_file) {
+void Lane::printLane(int rank, int size) {
     std::ostringstream lane_string_stream;
     for (int i = 0; i < (int) this->sites.size(); i++) {
         if (this->sites[i].empty()) {
@@ -140,37 +146,36 @@ void Lane::printLane(int rank, std::ofstream &log_file) {
             lane_string_stream << "[" << std::setw(3) << this->sites[i].front()->getId() << "]";
         }
     }
-    std::cout << lane_string_stream.str() << std::endl;
-    log_file << "Rank " << rank << ": " << lane_string_stream.str() << std::endl;
+    std::cout << "Rank: " << rank  << " (lane " << lane_num <<") " << lane_string_stream.str() << std::endl;
 }
 #endif
 
 int Lane::getGapFromStart() {
     size_t local_gap_start = this->sites.size();  // Start with the maximum gap
 
-    // Iterate through sites to find the first vehicle
+
     for (size_t i = 0; i < this->sites.size(); i++) {
         if (!this->sites[i].empty()) {
-            local_gap_start = i;  // Found the first vehicle, set gap
+            local_gap_start = i;
             break;
         }
     }
 
-    return static_cast<int>(local_gap_start); // Return the gap from the start of the lane
+    return static_cast<int>(local_gap_start);
 }
 
 int Lane::getGapFromEnd() {
-    size_t local_gap_end = this->sites.size();  // Start with the maximum gap
+    size_t local_gap_end = this->sites.size();
 
-    // Iterate through sites to find the last vehicle
+
     for (size_t i = this->sites.size() - 1; i >= 0; i--) {
         if (!this->sites[i].empty()) {
-            local_gap_end = this->sites.size() - 1 - i;  // Found the last vehicle, set gap
+            local_gap_end = this->sites.size() - 1 - i;
             break;
         }
     }
 
-    return static_cast<int>(local_gap_end); // Return the gap from the end of the lane
+    return static_cast<int>(local_gap_end);
 }
 
 int Lane::getGapPrevProcess() {
@@ -187,12 +192,4 @@ void Lane::setGapPrevProcess(int gap) {
 
 void Lane::setGapNextProcess(int gap) {
     this->gap_next_process = gap;
-}
-
-void Lane::printLaneFields(std::ofstream &log_file) {
-    log_file << "Lane " << this->lane_num << ":\n"
-             << "Gap from start: " << this->getGapFromStart() << "\n"
-             << "Gap from end: " << this->getGapFromEnd() << "\n"
-             << "Gap to prev process: " << this->gap_prev_process << "\n"
-             << "Gap to next process: " << this->gap_next_process << "\n";
 }
