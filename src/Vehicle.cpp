@@ -78,7 +78,7 @@ int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_f
     log_file << "vehicle " << this->id << " has gap_forward " << this->gap_forward << " and there is a vehicle ahead: " << found_vehicle_ahead << std::endl;
 
     if (!found_vehicle_ahead) {
-        if (rank > 0 && rank < size - 1) {
+        if (size != 0 && rank < size - 1) {
             this->gap_forward = this->lane_ptr->getSize() - this->position - 1;
         }
         this->gap_forward += this->lane_ptr->getGapNextProcess();
