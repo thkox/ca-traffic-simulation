@@ -108,11 +108,11 @@ void Road::calculate_gaps_from_neighbor_processes(int rank, int size, std::ofstr
 
         if (rank > 0) {  // If there is a previous process
             MPI_Recv(&received_gap_last_vehicle_to_end, 1, MPI_INT, rank - 1, TAG_GAP_LAST_TO_END, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            lane->setGapNextProcess(received_gap_last_vehicle_to_end);
+            lane->setGapPrevProcess(received_gap_last_vehicle_to_end);
         }
         if (rank < size - 1) {  // If there is a next process
             MPI_Recv(&received_gap_start_to_first_vehicle, 1, MPI_INT, rank + 1, TAG_GAP_START_TO_FIRST, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            lane->setGapPrevProcess(received_gap_start_to_first_vehicle);
+            lane->setGapNextProcess(received_gap_start_to_first_vehicle);
         }
 
          if (rank < size - 1) {

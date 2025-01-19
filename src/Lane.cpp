@@ -33,6 +33,9 @@ Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, 
 #endif
 
     this->steps_to_spawn = 0;
+
+    this->gap_prev_process = 0;
+    this->gap_next_process = 0;
 }
 
 /**
@@ -184,4 +187,12 @@ void Lane::setGapPrevProcess(int gap) {
 
 void Lane::setGapNextProcess(int gap) {
     this->gap_next_process = gap;
+}
+
+void Lane::printLaneFields(std::ofstream &log_file) {
+    log_file << "Lane " << this->lane_num << ":\n"
+             << "Gap from start: " << this->getGapFromStart() << "\n"
+             << "Gap from end: " << this->getGapFromEnd() << "\n"
+             << "Gap to prev process: " << this->gap_prev_process << "\n"
+             << "Gap to next process: " << this->gap_next_process << "\n";
 }

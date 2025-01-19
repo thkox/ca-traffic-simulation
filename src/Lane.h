@@ -43,6 +43,7 @@ public:
     void setGapNextProcess(int gap);
 #ifdef DEBUG
     void printLane(int rank, std::ofstream &log_file);
+    void printLaneFields(std::ofstream &log_file);
 #endif
 };
 
