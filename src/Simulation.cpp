@@ -73,11 +73,18 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
     while (this->time < this->inputs.max_time) {
 
 #ifdef DEBUG
+        MPI_Barrier(MPI_COMM_WORLD);
+
         std::cout << "road configuration at time " << time << ":" << std::endl;
         this->road_ptr->printRoad(rank, log_file);
 
+        MPI_Barrier(MPI_COMM_WORLD);
+
+
         log_file << "Rank " << rank << ": " << "Road configuration at time " << time << ":" << std::endl;
         this->road_ptr->printRoad(rank, log_file);
+
+        MPI_Barrier(MPI_COMM_WORLD);
 
         std::cout << "performing lane switches..." << std::endl;
         log_file << "Rank " << rank << ": " << "Performing lane switches..." << std::endl;
@@ -87,7 +94,7 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
         // Perform the lane switch step for all vehicles
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr, log_file);
+            this->vehicles[n]->updateGaps(this->road_ptr, rank, size, log_file);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
@@ -99,9 +106,13 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
 #ifdef DEBUG
 
+        MPI_Barrier(MPI_COMM_WORLD);
+
         this->road_ptr->printRoad(rank, log_file);
         std::cout << "performing lane movements..." << std::endl;
         log_file << "Rank " << rank << ": " << "Performing lane movements..." << std::endl;
+
+        MPI_Barrier(MPI_COMM_WORLD);
 
 #endif
 
@@ -110,7 +121,7 @@ int Simulation::run_simulation(int rank, int size, std::ofstream &log_file) {
 
         // Perform the independent lane updates
         for (int n = 0; n < (int) this->vehicles.size(); n++) {
-            this->vehicles[n]->updateGaps(this->road_ptr, log_file);
+            this->vehicles[n]->updateGaps(this->road_ptr, rank, size, log_file);
 #ifdef DEBUG
             this->vehicles[n]->printGaps(rank, log_file);
 #endif
