@@ -61,7 +61,7 @@ Vehicle::~Vehicle() {}
  * @param road_ptr pointer to the Road that the Vehicle is in
  * @return 0 if successful, nonzero otherwise
  */
-int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_file) {
+int Vehicle::updateGaps(Road* road_ptr, int rank, int size) {
     // Locate the preceding Vehicle and update the forward gap
     this->gap_forward = this->lane_ptr->getSize() - 1;
     bool found_vehicle_ahead = false;
@@ -72,17 +72,12 @@ int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_f
             break;
         }
     }
-    log_file << "vehicle " << this->id << std::endl;
-    this->lane_ptr->printLaneFields(log_file);
-
-    log_file << "vehicle " << this->id << " has gap_forward " << this->gap_forward << " and there is a vehicle ahead: " << found_vehicle_ahead << std::endl;
 
     if (!found_vehicle_ahead) {
         if (size != 0 && rank < size - 1) {
             this->gap_forward = this->lane_ptr->getSize() - this->position - 1;
         }
         this->gap_forward += this->lane_ptr->getGapNextProcess();
-        log_file << "vehicle " << this->id << " has updated the gap_forward to " << this->gap_forward << std::endl;
     }
 
     // Update vehicle look forward distances
@@ -97,8 +92,6 @@ int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_f
         other_lane_ptr = road_ptr->getLanes()[0];
     }
 
-    other_lane_ptr->printLaneFields(log_file);
-
     // Update the forward gap in the other lane
     this->gap_other_forward = this->lane_ptr->getSize() - 1;
     found_vehicle_ahead = false;
@@ -110,14 +103,12 @@ int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_f
         }
     }
 
-    log_file << "vehicle " << this->id << " has gap_other_forward " << this->gap_other_forward << " and there is a vehicle ahead: " << found_vehicle_ahead << std::endl;
 
     if (!found_vehicle_ahead) {
         if (rank > 0 && rank < size - 1) {
             this->gap_other_forward = other_lane_ptr->getSize() - this->position - 1;
         }
         this->gap_other_forward += other_lane_ptr->getGapNextProcess();
-        log_file << "vehicle " << this->id << " has updated the gap_other_forward to " << this->gap_other_forward << std::endl;
     }
 
     // Update the backward gap in the other lane
@@ -131,20 +122,12 @@ int Vehicle::updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_f
         }
     }
 
-    log_file << "vehicle " << this->id << " has gap_other_backward " << this->gap_other_backward << " and there is a vehicle behind: " << found_vehicle_behind << std::endl;
-
     if (!found_vehicle_behind) {
         if (rank > 0 && rank < size - 1) {
             this->gap_other_backward = this->position;
         }
         this->gap_other_backward += other_lane_ptr->getGapPrevProcess();
-        log_file << "vehicle " << this->id << " has updated the gap_other_backward to " << this->gap_other_backward << std::endl;
     }
-
-    log_file << "Lane gap_next_process: " << this->lane_ptr->getGapNextProcess() << "\n"
-         << "Lane gap_prev_process: " << this->lane_ptr->getGapPrevProcess() << "\n"
-         << "Other lane gap_next_process: " << other_lane_ptr->getGapNextProcess() << "\n"
-         << "Other lane gap_prev_process: " << other_lane_ptr->getGapPrevProcess() << "\n";
 
     // Return with zero errors
     return 0;
@@ -322,10 +305,8 @@ int Vehicle::setSpeed(int speed) {
  * Debug method for printing the gap information of the Vehicle
  */
 #ifdef DEBUG
-void Vehicle::printGaps(int rank, std::ofstream &log_file) {
+void Vehicle::printGaps() {
     std::cout << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
-        << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
-    log_file << "Rank " << rank << ": " << "vehicle " << std::setw(2) << this->id << " gaps, >:" << this->gap_forward << " ^>:"
         << this->gap_other_forward << " ^<:" << this->gap_other_backward << std::endl;
 }
 #endif

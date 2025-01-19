@@ -24,35 +24,19 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    std::ofstream log_file("debug_log.txt", std::ios::app);
-    if (!log_file.is_open()) {
-        std::cerr << "Failed to open log file" << std::endl;
-        MPI_Finalize();
-        return 1;
-    }
-
     if ( rank == 0 ) {
         std::cout << "================================================" << std::endl;
         std::cout << "||    CELLULAR AUTOMATA TRAFFIC SIMULATION    ||" << std::endl;
         std::cout << "================================================" << std::endl;
-
-        log_file << "================================================" << std::endl;
-        log_file << "||    CELLULAR AUTOMATA TRAFFIC SIMULATION    ||" << std::endl;
-        log_file << "================================================" << std::endl;
-
     }
 #ifndef DEBUG
     srand(time(NULL));
 #endif
 
-
-    log_file << "Rank " << rank << ": " << "I am rank " << rank << " of " << size << std::endl;
-
     // Create an Inputs object to contain the simulation parameters
     Inputs inputs = Inputs();
     if (rank == 0) {
         if (inputs.loadFromFile() != 0) {
-            log_file.close();
             MPI_Finalize();
             return 1;
         }
@@ -62,19 +46,16 @@ int main(int argc, char** argv) {
     MPI_Bcast(&inputs, sizeof(Inputs), MPI_BYTE, 0, MPI_COMM_WORLD);
 
     // Create a Simulation object for the current simulation only in the master process
-    Simulation* simulation_ptr = new Simulation(inputs, rank, size, log_file);
+    Simulation* simulation_ptr = new Simulation(inputs, rank, size);
 
     // Run the Simulation
-    simulation_ptr->run_simulation(rank, size, log_file);
+    simulation_ptr->run_simulation(rank, size);
 
     // Delete the Simulation object only in the master process
     delete simulation_ptr;
 
     // MPI Finalize
     MPI_Finalize();
-
-    // Close the log file
-    log_file.close();
 
     // Return with no errors
     return 0;

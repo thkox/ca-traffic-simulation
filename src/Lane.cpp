@@ -17,7 +17,7 @@
  * @param inputs instance of the Inputs class with simulation inputs
  * @param lane_num the number of lane in the road, starting with zero as the first lane
  */
-Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file) {
+Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank) {
 #ifdef DEBUG
     std::cout << "creating lane " << lane_num << "...";
 #endif
@@ -29,7 +29,6 @@ Lane::Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, 
     this->lane_num = lane_num;
 #ifdef DEBUG
     std::cout << "done, lane " << lane_num << " created with length " << this->sites.size() << std::endl;
-    log_file << "Rank " << rank << ": " << "Lane " << lane_num << " created with length " << this->sites.size() << std::endl;
 #endif
 
     this->steps_to_spawn = 0;
@@ -131,7 +130,7 @@ int Lane::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print the Lane to visualize the sites
  */
 #ifdef DEBUG
-void Lane::printLane(int rank, std::ofstream &log_file) {
+void Lane::printLane() {
     std::ostringstream lane_string_stream;
     for (int i = 0; i < (int) this->sites.size(); i++) {
         if (this->sites[i].empty()) {
@@ -141,7 +140,6 @@ void Lane::printLane(int rank, std::ofstream &log_file) {
         }
     }
     std::cout << lane_string_stream.str() << std::endl;
-    log_file << "Rank " << rank << ": " << lane_string_stream.str() << std::endl;
 }
 #endif
 
@@ -187,12 +185,4 @@ void Lane::setGapPrevProcess(int gap) {
 
 void Lane::setGapNextProcess(int gap) {
     this->gap_next_process = gap;
-}
-
-void Lane::printLaneFields(std::ofstream &log_file) {
-    log_file << "Lane " << this->lane_num << ":\n"
-             << "Gap from start: " << this->getGapFromStart() << "\n"
-             << "Gap from end: " << this->getGapFromEnd() << "\n"
-             << "Gap to prev process: " << this->gap_prev_process << "\n"
-             << "Gap to next process: " << this->gap_next_process << "\n";
 }

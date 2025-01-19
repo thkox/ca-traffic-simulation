@@ -12,14 +12,13 @@
  * Constructor for the Road
  * @param inputs instance of the Inputs class with simulation inputs
  */
-Road::Road(Inputs inputs, int start_site, int end_site, int rank, std::ofstream &log_file) {
+Road::Road(Inputs inputs, int start_site, int end_site, int rank) {
 #ifdef DEBUG
     std::cout << "creating new road with " << inputs.num_lanes << " lanes..." << std::endl;
-    log_file << "Rank " << rank << ": " << "Creating new road with " << inputs.num_lanes << " lanes..." << std::endl;
 #endif
     // Create the Lane objects for the Road
     for (int i = 0; i < inputs.num_lanes; i++) {
-        this->lanes.push_back(new Lane(inputs, i, start_site, end_site, rank, log_file));
+        this->lanes.push_back(new Lane(inputs, i, start_site, end_site, rank));
     }
 #ifdef DEBUG
     std::cout << "done creating road" << std::endl;
@@ -70,9 +69,9 @@ int Road::attemptSpawn(Inputs inputs, std::vector<Vehicle*>* vehicles, int* next
  * Debug function to print all the Lanes of the Road for visualizing the sites in the Road
  */
 #ifdef DEBUG
-void Road::printRoad(int rank, std::ofstream &log_file) {
+void Road::printRoad() {
     for (int i = this->lanes.size() - 1; i >= 0; i--) {
-        this->lanes[i]->printLane(rank, log_file);
+        this->lanes[i]->printLane();
 
     }
 }
@@ -84,7 +83,7 @@ void Road::printRoad(int rank, std::ofstream &log_file) {
  * @param size the number of processes
  * @param ofstream the output file stream
  */
-void Road::calculate_gaps_from_neighbor_processes(int rank, int size, std::ofstream &log_file) {
+void Road::calculate_gaps_from_neighbor_processes(int rank, int size) {
     // Temporary variables to store received gap values from neighbors
 
 
@@ -113,26 +112,6 @@ void Road::calculate_gaps_from_neighbor_processes(int rank, int size, std::ofstr
         if (rank < size - 1) {  // If there is a next process
             MPI_Recv(&received_gap_start_to_first_vehicle, 1, MPI_INT, rank + 1, TAG_GAP_START_TO_FIRST, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             lane->setGapNextProcess(received_gap_start_to_first_vehicle);
-        }
-
-         if (rank < size - 1) {
-            std::cout << "Rank " << rank << ": (Lane " << lane->getLaneNumber() << "): "
-                      << "Received received_gap_start_to_first_vehicle from rank " << rank + 1
-                      << ": " << received_gap_start_to_first_vehicle << std::endl;
-
-            log_file << "Rank " << rank << ": (Lane " << lane->getLaneNumber() << "): "
-                     << "Received received_gap_start_to_first_vehicle from rank " << rank + 1
-                     << ": " << received_gap_start_to_first_vehicle << std::endl;
-        }
-
-        if (rank > 0) {
-            std::cout << "Rank " << rank << ": (Lane " << lane->getLaneNumber() << "): "
-                      << "Received received_gap_last_vehicle_to_end    from rank " << rank - 1
-                      << ": " << received_gap_last_vehicle_to_end << std::endl;
-
-            log_file << "Rank " << rank << ": (Lane " << lane->getLaneNumber() << "): "
-                     << "Received received_gap_last_vehicle_to_end    from rank " << rank - 1
-                     << ": " << received_gap_last_vehicle_to_end << std::endl;
         }
     }
     MPI_Barrier(MPI_COMM_WORLD);

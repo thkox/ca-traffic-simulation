@@ -36,7 +36,7 @@ private:
 public:
     Vehicle(Lane* lane_ptr, int id, int initial_position, Inputs inputs);
     ~Vehicle();
-    int updateGaps(Road* road_ptr, int rank, int size, std::ofstream &log_file);
+    int updateGaps(Road* road_ptr, int rank, int size);
     int performLaneSwitch(Road* road_ptr, int rank, int size);
     int performLaneMove();
     int getId();
@@ -68,7 +68,7 @@ public:
 
 
 #ifdef DEBUG
-    void printGaps(int rank, std::ofstream &log_file);
+    void printGaps();
 #endif
 };
 

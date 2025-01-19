@@ -28,7 +28,7 @@ private:
     int gap_prev_process;
     int gap_next_process;
 public:
-    Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank, std::ofstream &log_file);
+    Lane(Inputs inputs, int lane_num, int start_site, int end_site, int rank);
     int getSize();
     int getLaneNumber();
     bool hasVehicleInSite(int site);
@@ -42,8 +42,7 @@ public:
     void setGapPrevProcess(int gap);
     void setGapNextProcess(int gap);
 #ifdef DEBUG
-    void printLane(int rank, std::ofstream &log_file);
-    void printLaneFields(std::ofstream &log_file);
+    void printLane();
 #endif
 };
 
